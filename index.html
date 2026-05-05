@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xcellexpert — Global Video Localization</title>
+<title>XcellVoxLaps — Global Video Localization & Content Repurposing</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -20,7 +21,6 @@
   }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -31,7 +31,6 @@
     line-height: 1.6;
   }
 
-  /* NOISE OVERLAY */
   body::before {
     content: '';
     position: fixed;
@@ -42,60 +41,54 @@
     opacity: 0.4;
   }
 
-  /* NAV */
+  /* ── NAV ── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 200;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 1.2rem 4rem;
     backdrop-filter: blur(20px);
-    background: rgba(8,10,15,0.8);
+    background: rgba(8,10,15,0.85);
     border-bottom: 1px solid var(--border);
   }
-
   .logo {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     letter-spacing: -0.02em;
     color: var(--text);
+    text-decoration: none;
   }
-
   .logo span { color: var(--accent); }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
-
+  .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
   .nav-links a {
     color: var(--muted);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
     transition: color 0.2s;
-    letter-spacing: 0.02em;
   }
-
   .nav-links a:hover { color: var(--text); }
-
   .nav-cta {
-    background: var(--accent);
+    background: var(--accent) !important;
     color: #000 !important;
-    padding: 0.55rem 1.4rem;
-    border-radius: 6px;
-    font-weight: 600 !important;
-    font-size: 0.85rem !important;
+    padding: 0.5rem 1.3rem !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
     transition: opacity 0.2s, transform 0.2s !important;
+    white-space: nowrap;
   }
+  .nav-cta:hover { opacity: 0.85 !important; transform: translateY(-1px); }
 
-  .nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+  /* ── PAGE SECTIONS ── */
+  .page-section { display: none; }
+  .page-section.active { display: block; }
 
-  /* HERO */
+  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -106,36 +99,25 @@
     text-align: center;
     overflow: hidden;
   }
-
-  .hero-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    pointer-events: none;
-  }
-
+  .hero-orb { position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none; }
   .orb1 {
     width: 600px; height: 600px;
     background: radial-gradient(circle, rgba(0,229,160,0.12), transparent 70%);
     top: -100px; left: 50%;
     transform: translateX(-50%);
-    animation: pulse 6s ease-in-out infinite;
+    animation: orbpulse 6s ease-in-out infinite;
   }
-
   .orb2 {
     width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(0,92,255,0.1), transparent 70%);
     bottom: 0; right: 10%;
-    animation: pulse 8s ease-in-out infinite reverse;
+    animation: orbpulse 8s ease-in-out infinite reverse;
   }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-    50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  @keyframes orbpulse {
+    0%,100% { opacity: 0.7; }
+    50% { opacity: 1; }
   }
-
-  .hero-content { position: relative; z-index: 1; max-width: 900px; }
-
+  .hero-content { position: relative; z-index: 1; max-width: 920px; }
   .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -143,7 +125,7 @@
     background: rgba(0,229,160,0.08);
     border: 1px solid rgba(0,229,160,0.25);
     color: var(--accent);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -152,17 +134,15 @@
     margin-bottom: 2rem;
     animation: fadeUp 0.8s ease forwards;
   }
-
   .hero h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.03em;
     margin-bottom: 1.5rem;
     animation: fadeUp 0.8s 0.1s ease both;
   }
-
   .hero h1 em {
     font-style: normal;
     background: linear-gradient(135deg, var(--accent), #00B8FF);
@@ -170,17 +150,15 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
   .hero p {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: var(--muted);
-    max-width: 640px;
+    max-width: 680px;
     margin: 0 auto 2.5rem;
-    line-height: 1.75;
+    line-height: 1.8;
     font-weight: 300;
     animation: fadeUp 0.8s 0.2s ease both;
   }
-
   .hero-ctas {
     display: flex;
     gap: 1rem;
@@ -188,593 +166,353 @@
     flex-wrap: wrap;
     animation: fadeUp 0.8s 0.3s ease both;
   }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--accent);
-    color: #000;
-    font-weight: 700;
-    font-size: 0.95rem;
-    padding: 0.85rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.2s;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .btn-primary:hover {
-    background: #00ffb2;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0,229,160,0.3);
-  }
-
-  .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    color: var(--text);
-    font-weight: 500;
-    font-size: 0.95rem;
-    padding: 0.85rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-  }
-
-  .btn-secondary:hover {
-    border-color: rgba(255,255,255,0.25);
-    background: rgba(255,255,255,0.04);
-    transform: translateY(-2px);
-  }
-
-  /* STATS STRIP */
-  .stats-strip {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: relative;
-    z-index: 1;
-  }
-
-  .stat {
-    flex: 1;
-    max-width: 220px;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    border-right: 1px solid var(--border);
-  }
-
-  .stat:last-child { border-right: none; }
-
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 0.4rem;
-  }
-
-  .stat-label {
-    font-size: 0.82rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  /* SECTIONS */
-  section {
-    padding: 7rem 4rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .section-tag {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 1.2rem;
-  }
-
-  .section-sub {
-    color: var(--muted);
-    font-size: 1.05rem;
-    max-width: 560px;
-    line-height: 1.7;
-  }
-
-  /* SERVICES */
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 4rem;
-  }
-
-  .service-card {
-    background: var(--card);
-    padding: 2.5rem;
-    transition: background 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .service-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .service-card:hover { background: #161c28; }
-  .service-card:hover::before { opacity: 1; }
-
-  .service-icon {
-    font-size: 2rem;
-    margin-bottom: 1.2rem;
-    display: block;
-  }
-
-  .service-card h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.6rem;
-    letter-spacing: -0.01em;
-  }
-
-  .service-card p {
-    color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.65;
-  }
-
-  /* PROCESS */
-  .process-steps {
-    margin-top: 4rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    position: relative;
-  }
-
-  .process-steps::before {
-    content: '';
-    position: absolute;
-    left: 28px;
-    top: 60px;
-    bottom: 60px;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
-  }
-
-  .step {
-    display: flex;
-    gap: 2rem;
-    padding: 2rem 0;
-    position: relative;
-  }
-
-  .step-num {
-    width: 56px;
-    height: 56px;
-    min-width: 56px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: var(--accent);
-    position: relative;
-    z-index: 1;
-  }
-
-  .step-content h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.4rem;
-    padding-top: 0.9rem;
-  }
-
-  .step-content p {
-    color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.65;
-  }
-
-  /* LANGUAGES */
-  .lang-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 3rem;
-  }
-
-  .lang-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 0.7rem 1.2rem;
-    border-radius: 100px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    cursor: default;
-  }
-
-  .lang-pill:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: rgba(0,229,160,0.06);
-  }
-
-  .lang-flag { font-size: 1.2rem; }
-
-  /* WHY SECTION */
-  .why-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 4rem;
-    align-items: start;
-  }
-
-  .why-left { position: sticky; top: 120px; }
-
-  .why-points { display: flex; flex-direction: column; gap: 1rem; }
-
-  .why-point {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    display: flex;
-    gap: 1rem;
-    transition: border-color 0.2s;
-  }
-
-  .why-point:hover { border-color: rgba(0,229,160,0.3); }
-
-  .why-icon {
-    font-size: 1.4rem;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    background: rgba(0,229,160,0.08);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .why-point h4 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .why-point p {
-    color: var(--muted);
-    font-size: 0.85rem;
-    line-height: 1.6;
-  }
-
-  /* PRICING */
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-top: 4rem;
-  }
-
-  .pricing-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
-    position: relative;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-
-  .pricing-card:hover { transform: translateY(-4px); }
-
-  .pricing-card.featured {
-    border-color: var(--accent);
-    background: linear-gradient(160deg, rgba(0,229,160,0.07), var(--card));
-  }
-
-  .pricing-card.featured::before {
-    content: 'Most Popular';
-    position: absolute;
-    top: -13px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: #000;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.3rem 0.9rem;
-    border-radius: 100px;
-  }
-
-  .plan-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 1rem;
-  }
-
-  .plan-price {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-
-  .plan-desc {
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin-bottom: 1.8rem;
-    padding-bottom: 1.8rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
-
-  .plan-features li {
-    font-size: 0.88rem;
-    color: var(--muted);
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-  }
-
-  .plan-features li::before {
-    content: '✓';
-    color: var(--accent);
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 0.05rem;
-  }
-
-  .btn-plan {
-    display: block;
-    text-align: center;
-    padding: 0.85rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: all 0.2s;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .btn-plan-ghost {
-    border: 1px solid var(--border);
-    color: var(--text);
-  }
-
-  .btn-plan-ghost:hover { border-color: var(--accent); color: var(--accent); }
-
-  .btn-plan-solid {
-    background: var(--accent);
-    color: #000;
-  }
-
-  .btn-plan-solid:hover {
-    background: #00ffb2;
-    box-shadow: 0 8px 30px rgba(0,229,160,0.3);
-  }
-
-  /* CTA BANNER */
-  .cta-banner {
-    background: linear-gradient(135deg, rgba(0,229,160,0.1), rgba(0,92,255,0.08));
-    border: 1px solid rgba(0,229,160,0.2);
-    border-radius: 20px;
-    padding: 5rem 4rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    margin: 0 2rem;
-  }
-
-  .cta-banner::before {
-    content: '🌍';
-    position: absolute;
-    font-size: 20rem;
-    opacity: 0.04;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .cta-banner h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 1rem;
-    position: relative;
-  }
-
-  .cta-banner p {
-    color: var(--muted);
-    max-width: 500px;
-    margin: 0 auto 2.5rem;
-    line-height: 1.7;
-    position: relative;
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    position: relative;
-  }
-
-  /* CONTACT ICONS */
-  .contact-icons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    position: relative;
-  }
-
-  .contact-icon {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 0.65rem 1.2rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--muted);
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .contact-icon:hover {
-    border-color: var(--accent);
-    color: var(--text);
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2.5rem 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 1;
-  }
-
-  footer .logo { font-size: 1.1rem; }
-
-  .footer-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-
-  .footer-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--text); }
-
-  footer p {
-    color: var(--muted);
-    font-size: 0.8rem;
-  }
-
-  /* ANIMATIONS */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .fade-in {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--accent); color: #000;
+    font-weight: 700; font-size: 0.95rem;
+    padding: 0.85rem 2rem; border-radius: 8px;
+    text-decoration: none; transition: all 0.2s;
+    font-family: 'Syne', sans-serif;
   }
-
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
+  .btn-primary:hover { background: #00ffb2; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,229,160,0.3); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: transparent; color: var(--text);
+    font-weight: 500; font-size: 0.95rem;
+    padding: 0.85rem 2rem; border-radius: 8px;
+    text-decoration: none; border: 1px solid var(--border);
+    transition: all 0.2s;
   }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); transform: translateY(-2px); }
 
-  /* TICKER */
+  /* ── TICKER ── */
   .ticker-wrap {
-    overflow: hidden;
-    background: var(--surface);
+    overflow: hidden; background: var(--surface);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
-    padding: 0.8rem 0;
-    position: relative;
-    z-index: 1;
+    padding: 0.8rem 0; position: relative; z-index: 1;
   }
-
-  .ticker {
-    display: flex;
-    width: max-content;
-    animation: ticker 25s linear infinite;
-  }
-
+  .ticker { display: flex; width: max-content; animation: ticker 25s linear infinite; }
   .ticker-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0 3rem;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    white-space: nowrap;
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0 3rem; font-size: 0.82rem; font-weight: 500;
+    color: var(--muted); letter-spacing: 0.05em; white-space: nowrap;
   }
-
   .ticker-dot { color: var(--accent); font-size: 0.5rem; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  @keyframes ticker {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+  /* ── STATS STRIP ── */
+  .stats-strip {
+    display: flex; justify-content: center; gap: 0;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    background: var(--surface); position: relative; z-index: 1;
   }
+  .stat { flex: 1; max-width: 220px; padding: 2.5rem 2rem; text-align: center; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 0.4rem; }
+  .stat-label { font-size: 0.82rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
 
+  /* ── GENERIC SECTION ── */
+  .content-section { padding: 7rem 4rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .full-width-section { padding: 7rem 0; background: var(--surface); position: relative; z-index: 1; }
+  .full-width-inner { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
+
+  .section-tag {
+    display: inline-block; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.15; margin-bottom: 1.2rem;
+  }
+  .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 560px; line-height: 1.7; }
+
+  /* ── SERVICES GRID ── */
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden; margin-top: 4rem;
+  }
+  .service-card {
+    background: var(--card); padding: 2.5rem;
+    transition: background 0.2s; position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .service-card:hover { background: #161c28; }
+  .service-card:hover::before { opacity: 1; }
+  .service-icon { font-size: 2rem; margin-bottom: 1.2rem; display: block; }
+  .service-card h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .service-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+  /* ── PROCESS ── */
+  .process-steps { margin-top: 4rem; display: flex; flex-direction: column; position: relative; }
+  .process-steps::before {
+    content: ''; position: absolute; left: 28px; top: 60px; bottom: 60px;
+    width: 1px; background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+  }
+  .step { display: flex; gap: 2rem; padding: 2rem 0; position: relative; }
+  .step-num {
+    width: 56px; height: 56px; min-width: 56px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.85rem;
+    color: var(--accent); position: relative; z-index: 1;
+  }
+  .step-content h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; padding-top: 0.9rem; }
+  .step-content p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+  /* ── LANGUAGES ── */
+  .lang-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 3rem; }
+  .lang-pill {
+    display: flex; align-items: center; gap: 0.6rem;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 0.7rem 1.2rem; border-radius: 100px;
+    font-size: 0.9rem; font-weight: 500; transition: all 0.2s; cursor: default;
+  }
+  .lang-pill:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.06); }
+  .lang-flag { font-size: 1.2rem; }
+
+  /* ── WHY GRID ── */
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 4rem; align-items: start; }
+  .why-left { position: sticky; top: 120px; }
+  .why-points { display: flex; flex-direction: column; gap: 1rem; }
+  .why-point {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.5rem; display: flex; gap: 1rem; transition: border-color 0.2s;
+  }
+  .why-point:hover { border-color: rgba(0,229,160,0.3); }
+  .why-icon {
+    font-size: 1.4rem; width: 44px; height: 44px; min-width: 44px;
+    background: rgba(0,229,160,0.08); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .why-point h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .why-point p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+
+  /* ── PRICING ── */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+  .pricing-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2.5rem 2rem; position: relative; transition: transform 0.2s, border-color 0.2s;
+  }
+  .pricing-card:hover { transform: translateY(-4px); }
+  .pricing-card.featured {
+    border-color: var(--accent);
+    background: linear-gradient(160deg, rgba(0,229,160,0.07), var(--card));
+  }
+  .pricing-card.featured::before {
+    content: 'Most Popular'; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #000; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 100px;
+  }
+  .plan-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+  .plan-price { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; line-height: 1; margin-bottom: 0.3rem; }
+  .plan-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.8rem; padding-bottom: 1.8rem; border-bottom: 1px solid var(--border); }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
+  .plan-features li { font-size: 0.88rem; color: var(--muted); display: flex; align-items: flex-start; gap: 0.6rem; }
+  .plan-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 0.05rem; }
+  .btn-plan { display: block; text-align: center; padding: 0.85rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; font-family: 'Syne', sans-serif; }
+  .btn-plan-ghost { border: 1px solid var(--border); color: var(--text); }
+  .btn-plan-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-plan-solid { background: var(--accent); color: #000; }
+  .btn-plan-solid:hover { background: #00ffb2; box-shadow: 0 8px 30px rgba(0,229,160,0.3); }
+
+  /* ── CTA BANNER ── */
+  .cta-banner {
+    background: linear-gradient(135deg, rgba(0,229,160,0.1), rgba(0,92,255,0.08));
+    border: 1px solid rgba(0,229,160,0.2); border-radius: 20px;
+    padding: 5rem 4rem; text-align: center; position: relative; overflow: hidden;
+    margin: 0 2rem;
+  }
+  .cta-banner::before { content: '🌍'; position: absolute; font-size: 20rem; opacity: 0.04; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+  .cta-banner h2 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 1rem; position: relative; }
+  .cta-banner p { color: var(--muted); max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.7; position: relative; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; }
+  .contact-icons { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; position: relative; }
+  .contact-icon {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 0.65rem 1.2rem; border-radius: 100px;
+    font-size: 0.85rem; font-weight: 500; color: var(--muted);
+    text-decoration: none; transition: all 0.2s;
+  }
+  .contact-icon:hover { border-color: var(--accent); color: var(--text); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 2.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+  footer p { color: var(--muted); font-size: 0.8rem; }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ═══════════════════════════════
+     BLOG / SEO PAGE STYLES
+  ════════════════════════════════ */
+  .blog-hero {
+    padding: 9rem 4rem 4rem;
+    background: linear-gradient(135deg, #0b0c10 0%, #12102a 50%, #0b1520 100%);
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .blog-hero::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .blog-header-tag {
+    display: inline-block;
+    background: rgba(0,229,160,0.1); color: var(--accent);
+    border: 1px solid rgba(0,229,160,0.25);
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.3rem 0.9rem;
+    border-radius: 20px; margin-bottom: 1rem;
+  }
+  .blog-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800; line-height: 1.15; margin-bottom: 0.8rem;
+  }
+  .blog-hero h1 span { color: var(--accent); }
+  .blog-hero p { color: var(--muted); max-width: 560px; }
+
+  /* Blog tab nav */
+  .blog-tab-nav {
+    display: flex; gap: 4px; padding: 0 4rem;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    overflow-x: auto; position: sticky; top: 70px; z-index: 150;
+  }
+  .blog-tab-btn {
+    background: none; border: none; color: var(--muted);
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    padding: 0.9rem 1.2rem; cursor: pointer; border-radius: 6px 6px 0 0;
+    border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s;
+  }
+  .blog-tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .blog-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(0,229,160,0.06); }
+
+  /* Blog main */
+  .blog-main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 4rem; }
+
+  .blog-tab-content { display: none; }
+  .blog-tab-content.active { display: block; }
+
+  /* Stats strip (blog) */
+  .blog-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+  .bstat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; text-align: center; }
+  .bstat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .bstat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* Scoring framework */
+  .scoring-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+  .score-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; }
+  .score-card-title { color: var(--accent); font-weight: 700; margin-bottom: 0.4rem; font-size: 0.9rem; }
+  .score-card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  /* Analysis table */
+  .blog-section-title {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.8rem;
+    color: var(--text);
+  }
+  .blog-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .analysis-wrap { overflow-x: auto; }
+  .analysis-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .analysis-table thead tr { background: #1c1e28; }
+  .analysis-table th {
+    text-align: left; padding: 0.75rem 0.9rem; font-weight: 600; color: var(--muted);
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .analysis-table td { padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .analysis-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .analysis-table tr.sel td { background: rgba(0,229,160,0.04); }
+  .topic-title { font-weight: 500; color: var(--text); margin-bottom: 2px; font-size: 0.85rem; }
+  .topic-intent { font-size: 0.75rem; color: var(--muted); }
+
+  /* Pills */
+  .pill { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .pill-blue   { background: rgba(0,229,160,0.1);  color: var(--accent); }
+  .pill-purple { background: rgba(124,77,255,0.12); color: #b39ddb; }
+  .pill-green  { background: rgba(0,230,118,0.1);  color: #00e676; }
+  .pill-orange { background: rgba(255,152,0,0.1);  color: #ffb74d; }
+  .pill-red    { background: rgba(255,82,82,0.1);  color: #ff5252; }
+  .pill-pick   { background: rgba(0,229,160,0.18); color: var(--accent); border: 1px solid rgba(0,229,160,0.4); }
+
+  .score-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%; font-weight: 700; font-size: 0.75rem; flex-shrink: 0;
+  }
+  .score-badge.high { background: rgba(0,230,118,0.15); color: #00e676; border: 1.5px solid rgba(0,230,118,0.3); }
+  .score-badge.med  { background: rgba(255,215,64,0.12); color: #ffd740; border: 1.5px solid rgba(255,215,64,0.3); }
+  .score-badge.low  { background: rgba(255,82,82,0.12); color: #ff5252;  border: 1.5px solid rgba(255,82,82,0.3); }
+
+  .why-box {
+    background: var(--card); border: 1px solid rgba(0,229,160,0.2); border-radius: 10px;
+    padding: 1.5rem; margin-top: 1.5rem;
+  }
+  .why-box-title { font-weight: 700; color: var(--accent); margin-bottom: 0.6rem; font-size: 0.9rem; }
+  .why-box-text { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+
+  /* Article cards */
+  .article-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin-bottom: 2.5rem;
+  }
+  .article-meta {
+    padding: 1.5rem 1.8rem 1.2rem; border-bottom: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; justify-content: space-between;
+  }
+  .article-num { font-size: 0.7rem; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .article-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .article-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .article-kw { background: #1c1e28; border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.8rem; }
+  .kw-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .kw-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .kw-tag { background: rgba(124,77,255,0.1); color: #b39ddb; border: 1px solid rgba(124,77,255,0.2); border-radius: 4px; font-size: 0.75rem; padding: 2px 8px; }
+  .article-body { padding: 1.8rem; font-size: 0.9rem; line-height: 1.8; color: #cdd0df; }
+  .article-body h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin: 1.5rem 0 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+  .article-body h3 { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--accent); margin: 1.2rem 0 0.4rem; }
+  .article-body p { margin-bottom: 0.9rem; }
+  .article-body ul { margin: 0 0 0.9rem 1.2rem; }
+  .article-body li { margin-bottom: 0.3rem; }
+  .art-cta-box {
+    background: linear-gradient(135deg, rgba(0,229,160,0.08), rgba(124,77,255,0.08));
+    border: 1px solid rgba(0,229,160,0.2); border-radius: 8px;
+    padding: 1.2rem 1.5rem; margin-top: 1.2rem; font-size: 0.88rem;
+  }
+  .art-cta-box strong { color: var(--accent); }
+  .art-cta-box a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .art-cta-box a:hover { text-decoration: underline; }
+
+  /* ── MOBILE ── */
   @media (max-width: 900px) {
     nav { padding: 1rem 1.5rem; }
     .nav-links { display: none; }
-    section { padding: 4rem 1.5rem; }
+    .content-section, .full-width-inner, .blog-main, .blog-hero { padding: 4rem 1.5rem; }
     .hero { padding: 7rem 1.5rem 4rem; }
     .why-grid { grid-template-columns: 1fr; }
     .why-left { position: static; }
@@ -783,335 +521,646 @@
     .stat { min-width: 50%; border-bottom: 1px solid var(--border); }
     footer { flex-direction: column; gap: 1.5rem; text-align: center; }
     .cta-banner { padding: 3rem 1.5rem; margin: 0; }
+    .blog-tab-nav { padding: 0 1rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ══════════════════════ NAV ══════════════════════ -->
 <nav>
-  <div class="logo">Xcell<span>expert</span></div>
+  <a class="logo" href="#" onclick="showPage('home')">XcellVox<span>Laps</span></a>
   <ul class="nav-links">
-    <li><a href="#services">Services</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#languages">Languages</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-    <li><a href="https://wa.me/2349032365125" class="nav-cta">Get Started</a></li>
+    <li><a href="#" onclick="showPage('home'); scrollTo('#services')">Services</a></li>
+    <li><a href="#" onclick="showPage('home'); scrollTo('#process')">Process</a></li>
+    <li><a href="#" onclick="showPage('home'); scrollTo('#languages')">Languages</a></li>
+    <li><a href="#" onclick="showPage('home'); scrollTo('#pricing')">Pricing</a></li>
+    <li><a href="#" onclick="showPage('blog')" style="color: var(--muted);">Resources</a></li>
+    <li><a href="https://wa.me/2349032365125" class="nav-cta" target="_blank">Get Started</a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-orb orb1"></div>
-  <div class="hero-orb orb2"></div>
-  <div class="hero-content">
-    <div class="hero-badge">🌍 Video Localization Experts</div>
-    <h1>Your Videos.<br><em>Every Market.</em><br>Maximum Revenue.</h1>
-    <p>Turn your existing YouTube content into multi-market revenue streams — without creating a single new video. Native voiceovers, expert translation, and full publishing handled for you.</p>
-    <div class="hero-ctas">
-      <a href="https://wa.me/2349032365125" class="btn-primary">💬 Chat on WhatsApp</a>
-      <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" target="_blank" class="btn-secondary">▶ View Sample Work</a>
-    </div>
-  </div>
-</section>
 
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker">
-    <div class="ticker-item"><span>🇪🇸 Spanish</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇧🇷 Portuguese</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇮🇳 Hindi</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇸🇦 Arabic</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇫🇷 French</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🌍 Global Reach</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🎙 Native Voiceovers</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>📈 More Revenue</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇪🇸 Spanish</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇧🇷 Portuguese</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇮🇳 Hindi</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇸🇦 Arabic</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🇫🇷 French</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🌍 Global Reach</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>🎙 Native Voiceovers</span><span class="ticker-dot">●</span></div>
-    <div class="ticker-item"><span>📈 More Revenue</span><span class="ticker-dot">●</span></div>
-  </div>
-</div>
+<!-- ══════════════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════════════ -->
+<div id="page-home" class="page-section active">
 
-<!-- STATS -->
-<div class="stats-strip">
-  <div class="stat fade-in">
-    <div class="stat-num">5+</div>
-    <div class="stat-label">Languages Supported</div>
-  </div>
-  <div class="stat fade-in">
-    <div class="stat-num">3B+</div>
-    <div class="stat-label">New Viewers Unlocked</div>
-  </div>
-  <div class="stat fade-in">
-    <div class="stat-num">48hr</div>
-    <div class="stat-label">Avg. Turnaround</div>
-  </div>
-  <div class="stat fade-in">
-    <div class="stat-num">0</div>
-    <div class="stat-label">New Videos Required</div>
-  </div>
-</div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-orb orb1"></div>
+    <div class="hero-orb orb2"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🌍 Video Localization & Content Repurposing</div>
+      <h1>Turn Existing Content<br>Into <em>Scalable Revenue.</em></h1>
+      <p>Turn your existing content into scalable, multi-market revenue streams — without creating anything new. From videos to digital assets, everything is repurposed with native voiceovers, expert translation, and fully managed publishing tailored to each market.</p>
+      <div class="hero-ctas">
+        <a href="https://wa.me/2349032365125" class="btn-primary" target="_blank">💬 Chat on WhatsApp</a>
+        <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" target="_blank" class="btn-secondary">▶ View Sample Work</a>
+      </div>
+    </div>
+  </section>
 
-<!-- SERVICES -->
-<section id="services">
-  <div class="fade-in">
-    <span class="section-tag">What We Do</span>
-    <h2 class="section-title">End-to-End Localization,<br>Done for You</h2>
-    <p class="section-sub">From your raw video to a fully localized, published version in a new language — we handle every step.</p>
-  </div>
-  <div class="services-grid fade-in">
-    <div class="service-card">
-      <span class="service-icon">🎙</span>
-      <h3>Native Voiceover</h3>
-      <p>Real human voices from native speakers — not robotic AI. Your content sounds authentic in every market it enters.</p>
-    </div>
-    <div class="service-card">
-      <span class="service-icon">🌐</span>
-      <h3>Expert Translation</h3>
-      <p>Cultural nuance matters. We don't just translate words — we localize meaning so your message lands perfectly.</p>
-    </div>
-    <div class="service-card">
-      <span class="service-icon">✏️</span>
-      <h3>Transcription</h3>
-      <p>Accurate transcription of your original video content forms the foundation of every flawless localization.</p>
-    </div>
-    <div class="service-card">
-      <span class="service-icon">🎬</span>
-      <h3>Video Dubbing & Sync</h3>
-      <p>We sync the dubbed audio to your video timeline so lips, cuts, and energy all match naturally.</p>
-    </div>
-    <div class="service-card">
-      <span class="service-icon">📤</span>
-      <h3>Publishing & Upload</h3>
-      <p>We handle the final upload to your YouTube channel — optimized titles, descriptions, and tags in the target language.</p>
-    </div>
-    <div class="service-card">
-      <span class="service-icon">📊</span>
-      <h3>SEO Localization</h3>
-      <p>Your new video gets optimized for discovery in its target market — so it actually gets found and watched.</p>
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <div class="ticker-item"><span>🇪🇸 Spanish</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇧🇷 Portuguese</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇮🇳 Hindi</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇸🇦 Arabic</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇫🇷 French</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🌍 Global Reach</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🎙 Native Voiceovers</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>📈 More Revenue</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>♻️ Repurposed Content</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇪🇸 Spanish</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇧🇷 Portuguese</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇮🇳 Hindi</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇸🇦 Arabic</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🇫🇷 French</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🌍 Global Reach</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>🎙 Native Voiceovers</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>📈 More Revenue</span><span class="ticker-dot">●</span></div>
+      <div class="ticker-item"><span>♻️ Repurposed Content</span><span class="ticker-dot">●</span></div>
     </div>
   </div>
-</section>
 
-<!-- PROCESS -->
-<section id="process" style="background: var(--surface); max-width: 100%; padding: 7rem 0;">
-  <div style="max-width: 1200px; margin: 0 auto; padding: 0 4rem;">
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat fade-in"><div class="stat-num">5+</div><div class="stat-label">Languages Supported</div></div>
+    <div class="stat fade-in"><div class="stat-num">3B+</div><div class="stat-label">New Viewers Unlocked</div></div>
+    <div class="stat fade-in"><div class="stat-num">48hr</div><div class="stat-label">Avg. Turnaround</div></div>
+    <div class="stat fade-in"><div class="stat-num">0</div><div class="stat-label">New Videos Required</div></div>
+  </div>
+
+  <!-- SERVICES -->
+  <section id="services" class="content-section">
     <div class="fade-in">
-      <span class="section-tag">How It Works</span>
-      <h2 class="section-title">Simple Process,<br>Powerful Results</h2>
-      <p class="section-sub">Six steps from your YouTube video to a fully localized version generating revenue in a new market.</p>
+      <span class="section-tag">What We Do</span>
+      <h2 class="section-title">End-to-End Localization,<br>Done for You</h2>
+      <p class="section-sub">From raw video to a fully localized, published version in a new language — every step handled by our team.</p>
     </div>
-    <div class="process-steps">
-      <div class="step fade-in">
-        <div class="step-num">01</div>
-        <div class="step-content">
-          <h3>Share Your Video</h3>
-          <p>Send us the YouTube link or video file you want localized. We handle any length, any niche.</p>
-        </div>
+    <div class="services-grid fade-in">
+      <div class="service-card">
+        <span class="service-icon">🎙</span>
+        <h3>Native Voiceover</h3>
+        <p>Real human voices from native speakers — not robotic AI. Your content sounds authentic in every market it enters.</p>
       </div>
-      <div class="step fade-in">
-        <div class="step-num">02</div>
-        <div class="step-content">
-          <h3>Choose Your Target Language</h3>
-          <p>Pick from Spanish, Portuguese, Hindi, Arabic, French, or discuss additional languages with us.</p>
-        </div>
+      <div class="service-card">
+        <span class="service-icon">🌐</span>
+        <h3>Expert Translation</h3>
+        <p>Cultural nuance matters. We don't just translate words — we localize meaning so your message lands perfectly.</p>
       </div>
-      <div class="step fade-in">
-        <div class="step-num">03</div>
-        <div class="step-content">
-          <h3>We Transcribe & Translate</h3>
-          <p>Expert transcription followed by culturally-aware translation that preserves your voice and message.</p>
-        </div>
+      <div class="service-card">
+        <span class="service-icon">♻️</span>
+        <h3>Content Repurposing</h3>
+        <p>Your existing videos, blogs, and digital assets transformed into localized multi-market revenue streams with zero new production.</p>
       </div>
-      <div class="step fade-in">
-        <div class="step-num">04</div>
-        <div class="step-content">
-          <h3>Native Voiceover Recording</h3>
-          <p>Native speakers record the dubbed audio — natural, engaging, and authentic to the target culture.</p>
-        </div>
+      <div class="service-card">
+        <span class="service-icon">🎬</span>
+        <h3>Video Dubbing & Sync</h3>
+        <p>We sync the dubbed audio to your video timeline so lips, cuts, and energy all match naturally.</p>
       </div>
-      <div class="step fade-in">
-        <div class="step-num">05</div>
-        <div class="step-content">
-          <h3>Sync & Quality Check</h3>
-          <p>We sync audio to your video, review the final output, and ensure quality meets our standards.</p>
-        </div>
+      <div class="service-card">
+        <span class="service-icon">📤</span>
+        <h3>Managed Publishing</h3>
+        <p>Full platform publishing — optimized titles, descriptions, and tags in each target language, tailored to each market's discovery algorithm.</p>
       </div>
-      <div class="step fade-in">
-        <div class="step-num">06</div>
-        <div class="step-content">
-          <h3>Publish & Optimize</h3>
-          <p>Your localized video goes live — fully optimized for SEO in its new language market, ready to grow.</p>
-        </div>
+      <div class="service-card">
+        <span class="service-icon">📊</span>
+        <h3>SEO Localization</h3>
+        <p>Your localized content gets optimized for discovery in every target market — so it gets found, watched, and converts.</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- LANGUAGES -->
-<section id="languages">
-  <div class="fade-in">
-    <span class="section-tag">Markets We Unlock</span>
-    <h2 class="section-title">Reach Billions of New<br>Potential Viewers</h2>
-    <p class="section-sub">The world doesn't speak only English. We help your content break into the world's largest and fastest-growing YouTube markets.</p>
-  </div>
-  <div class="lang-grid fade-in">
-    <div class="lang-pill"><span class="lang-flag">🇪🇸</span> Spanish — 500M+ Speakers</div>
-    <div class="lang-pill"><span class="lang-flag">🇧🇷</span> Portuguese — 260M+ Speakers</div>
-    <div class="lang-pill"><span class="lang-flag">🇮🇳</span> Hindi — 600M+ Speakers</div>
-    <div class="lang-pill"><span class="lang-flag">🇸🇦</span> Arabic — 400M+ Speakers</div>
-    <div class="lang-pill"><span class="lang-flag">🇫🇷</span> French — 300M+ Speakers</div>
-    <div class="lang-pill"><span class="lang-flag">🌍</span> More on request</div>
-  </div>
-</section>
-
-<!-- WHY US -->
-<section style="background: var(--surface); max-width: 100%; padding: 7rem 0;">
-  <div style="max-width: 1200px; margin: 0 auto; padding: 0 4rem;">
-    <div class="why-grid">
-      <div class="why-left fade-in">
-        <span class="section-tag">Why Xcellexpert</span>
-        <h2 class="section-title">The Localization Partner<br>Creators Trust</h2>
-        <p class="section-sub" style="margin-bottom: 2rem;">We're not a translation agency. We're a creator growth engine that turns your existing videos into global revenue machines.</p>
-        <a href="https://wa.me/2349032365125" class="btn-primary" style="display: inline-flex;">Get a Free Consultation →</a>
+  <!-- PROCESS -->
+  <div class="full-width-section" id="process">
+    <div class="full-width-inner">
+      <div class="fade-in">
+        <span class="section-tag">How It Works</span>
+        <h2 class="section-title">Simple Process,<br>Powerful Results</h2>
+        <p class="section-sub">Six steps from your existing content to fully localized revenue generating assets live in new markets.</p>
       </div>
-      <div class="why-points">
-        <div class="why-point fade-in">
-          <div class="why-icon">🎯</div>
-          <div>
-            <h4>Creator-First Approach</h4>
-            <p>We understand YouTube — your channel, your audience, your growth goals. Every decision we make is aligned with your long-term success.</p>
+      <div class="process-steps">
+        <div class="step fade-in">
+          <div class="step-num">01</div>
+          <div class="step-content"><h3>Share Your Content</h3><p>Send us the video link, file, or digital asset you want localized. We handle any length, any format, any niche.</p></div>
+        </div>
+        <div class="step fade-in">
+          <div class="step-num">02</div>
+          <div class="step-content"><h3>Choose Your Target Markets</h3><p>Pick from Spanish, Portuguese, Hindi, Arabic, French — or discuss additional languages and markets with our team.</p></div>
+        </div>
+        <div class="step fade-in">
+          <div class="step-num">03</div>
+          <div class="step-content"><h3>We Transcribe & Translate</h3><p>Expert transcription followed by culturally-aware translation that preserves your voice and message.</p></div>
+        </div>
+        <div class="step fade-in">
+          <div class="step-num">04</div>
+          <div class="step-content"><h3>Native Voiceover Recording</h3><p>Native speakers record the dubbed audio — natural, engaging, and authentic to the target culture.</p></div>
+        </div>
+        <div class="step fade-in">
+          <div class="step-num">05</div>
+          <div class="step-content"><h3>Sync & Quality Check</h3><p>We sync audio to your video, review the final output, and ensure quality meets our standards before delivery.</p></div>
+        </div>
+        <div class="step fade-in">
+          <div class="step-num">06</div>
+          <div class="step-content"><h3>Managed Publish & Optimize</h3><p>Your localized content goes live — fully optimized for SEO in its new language market, tailored for each platform's algorithm.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANGUAGES -->
+  <section id="languages" class="content-section">
+    <div class="fade-in">
+      <span class="section-tag">Markets We Unlock</span>
+      <h2 class="section-title">Reach Billions of New<br>Potential Viewers</h2>
+      <p class="section-sub">The world doesn't speak only English. We help your content break into the world's largest and fastest-growing markets.</p>
+    </div>
+    <div class="lang-grid fade-in">
+      <div class="lang-pill"><span class="lang-flag">🇪🇸</span> Spanish — 500M+ Speakers</div>
+      <div class="lang-pill"><span class="lang-flag">🇧🇷</span> Portuguese — 260M+ Speakers</div>
+      <div class="lang-pill"><span class="lang-flag">🇮🇳</span> Hindi — 600M+ Speakers</div>
+      <div class="lang-pill"><span class="lang-flag">🇸🇦</span> Arabic — 400M+ Speakers</div>
+      <div class="lang-pill"><span class="lang-flag">🇫🇷</span> French — 300M+ Speakers</div>
+      <div class="lang-pill"><span class="lang-flag">🌍</span> More on request</div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <div class="full-width-section">
+    <div class="full-width-inner">
+      <div class="why-grid">
+        <div class="why-left fade-in">
+          <span class="section-tag">Why XcellVoxLaps</span>
+          <h2 class="section-title">The Localization Partner<br>Creators & Brands Trust</h2>
+          <p class="section-sub" style="margin-bottom: 2rem;">We're not a translation agency. We're a content growth engine that turns your existing assets into global revenue machines — fully managed, start to finish.</p>
+          <a href="https://wa.me/2349032365125" class="btn-primary" style="display: inline-flex;" target="_blank">Get a Free Consultation →</a>
+        </div>
+        <div class="why-points">
+          <div class="why-point fade-in">
+            <div class="why-icon">🎯</div>
+            <div><h4>Creator & Brand-First Approach</h4><p>We understand your channel, your audience, and your growth goals. Every decision is aligned with your long-term success in each new market.</p></div>
+          </div>
+          <div class="why-point fade-in">
+            <div class="why-icon">🔊</div>
+            <div><h4>Real Native Speakers</h4><p>No AI shortcuts. Real humans with natural accents record every voiceover so your new audience trusts and connects with your content.</p></div>
+          </div>
+          <div class="why-point fade-in">
+            <div class="why-icon">⚡</div>
+            <div><h4>Fast 48-Hour Turnaround</h4><p>Your content can be live in a new market within 48 hours. No month-long agency delays or production bottlenecks.</p></div>
+          </div>
+          <div class="why-point fade-in">
+            <div class="why-icon">📈</div>
+            <div><h4>More Revenue, Zero New Work</h4><p>Your existing content is your greatest asset. We multiply its earning potential across multiple language markets — nothing new to create.</p></div>
+          </div>
+          <div class="why-point fade-in">
+            <div class="why-icon">🔒</div>
+            <div><h4>Fully Managed Publishing</h4><p>From transcription to live publishing — tailored to each market's platform and algorithm. You focus on creating; we handle the expansion.</p></div>
           </div>
         </div>
-        <div class="why-point fade-in">
-          <div class="why-icon">🔊</div>
-          <div>
-            <h4>Real Native Speakers</h4>
-            <p>No AI text-to-speech shortcuts. Real humans with natural accents record every voiceover so your new audience trusts and connects with your content.</p>
-          </div>
-        </div>
-        <div class="why-point fade-in">
-          <div class="why-icon">⚡</div>
-          <div>
-            <h4>Fast 48-Hour Turnaround</h4>
-            <p>Your content can be live in a new market within 48 hours. No months-long agency delays or production headaches.</p>
-          </div>
-        </div>
-        <div class="why-point fade-in">
-          <div class="why-icon">📈</div>
-          <div>
-            <h4>More Revenue, Zero New Work</h4>
-            <p>Your existing videos are your greatest asset. We multiply their earning potential across multiple language markets — no new filming required.</p>
-          </div>
-        </div>
-        <div class="why-point fade-in">
-          <div class="why-icon">🔒</div>
-          <div>
-            <h4>Full Done-for-You Service</h4>
-            <p>From transcription to publishing — you hand us the video, we handle everything else. You focus on creating; we handle expanding.</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- PRICING -->
-<section id="pricing">
-  <div class="fade-in">
-    <span class="section-tag">Pricing</span>
-    <h2 class="section-title">Transparent Plans,<br>Real ROI</h2>
-    <p class="section-sub">Choose the engagement that matches your channel's stage and ambition. All plans include full end-to-end service.</p>
-  </div>
-  <div class="pricing-grid fade-in">
-    <div class="pricing-card">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">Custom</div>
-      <div class="plan-desc">Best for single-video trials and first-time clients testing the waters.</div>
-      <ul class="plan-features">
-        <li>1 video localized</li>
-        <li>1 target language</li>
-        <li>Native voiceover</li>
-        <li>Translation & transcription</li>
-        <li>Delivery within 48 hours</li>
-      </ul>
-      <a href="https://wa.me/2349032365125" class="btn-plan btn-plan-ghost">Get a Quote</a>
+  <!-- PRICING -->
+  <section id="pricing" class="content-section">
+    <div class="fade-in">
+      <span class="section-tag">Pricing</span>
+      <h2 class="section-title">Transparent Plans,<br>Real ROI</h2>
+      <p class="section-sub">Choose the engagement that matches your stage and ambition. All plans include full end-to-end service.</p>
     </div>
-    <div class="pricing-card featured">
-      <div class="plan-name">Growth</div>
-      <div class="plan-price">Custom</div>
-      <div class="plan-desc">For creators ready to build a consistent global presence across key markets.</div>
-      <ul class="plan-features">
-        <li>4–10 videos/month</li>
-        <li>Up to 3 target languages</li>
-        <li>Native voiceover per language</li>
-        <li>SEO optimization included</li>
-        <li>YouTube publishing handled</li>
-        <li>Priority turnaround</li>
-      </ul>
-      <a href="https://wa.me/2349032365125" class="btn-plan btn-plan-solid">Start Growing</a>
+    <div class="pricing-grid fade-in">
+      <div class="pricing-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">Custom</div>
+        <div class="plan-desc">Best for single-asset trials and first-time clients testing a new market.</div>
+        <ul class="plan-features">
+          <li>1 video or asset localized</li>
+          <li>1 target language/market</li>
+          <li>Native voiceover included</li>
+          <li>Translation & transcription</li>
+          <li>Delivery within 48 hours</li>
+        </ul>
+        <a href="https://wa.me/2349032365125" class="btn-plan btn-plan-ghost" target="_blank">Get a Quote</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">Custom</div>
+        <div class="plan-desc">For creators and brands ready to build a consistent global presence across key markets.</div>
+        <ul class="plan-features">
+          <li>4–10 assets/month</li>
+          <li>Up to 3 target languages</li>
+          <li>Native voiceover per market</li>
+          <li>SEO optimization included</li>
+          <li>Managed publishing handled</li>
+          <li>Priority turnaround</li>
+        </ul>
+        <a href="https://wa.me/2349032365125" class="btn-plan btn-plan-solid" target="_blank">Start Growing</a>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Scale</div>
+        <div class="plan-price">Custom</div>
+        <div class="plan-desc">For established creators, brands, and media companies scaling into multiple global markets.</div>
+        <ul class="plan-features">
+          <li>Unlimited assets</li>
+          <li>All 5+ languages</li>
+          <li>Dedicated account manager</li>
+          <li>Bulk pricing discounts</li>
+          <li>Analytics & growth reporting</li>
+          <li>White-glove support</li>
+        </ul>
+        <a href="https://wa.me/2349032365125" class="btn-plan btn-plan-ghost" target="_blank">Let's Talk</a>
+      </div>
     </div>
-    <div class="pricing-card">
-      <div class="plan-name">Scale</div>
-      <div class="plan-price">Custom</div>
-      <div class="plan-desc">For established creators and media companies scaling into multiple global markets.</div>
-      <ul class="plan-features">
-        <li>Unlimited videos</li>
-        <li>All 5+ languages</li>
-        <li>Dedicated account manager</li>
-        <li>Bulk pricing discounts</li>
-        <li>Analytics & growth reporting</li>
-        <li>White-glove support</li>
-      </ul>
-      <a href="https://wa.me/2349032365125" class="btn-plan btn-plan-ghost">Let's Talk</a>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- CTA BANNER -->
-<div style="padding: 0 2rem 7rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
-  <div class="cta-banner fade-in">
-    <h2>Your Next Million Views<br>Are in a Different Language</h2>
-    <p>Let's unlock them together. Reach out today — your first consultation is completely free.</p>
-    <div class="cta-buttons">
-      <a href="https://wa.me/2349032365125" class="btn-primary">💬 WhatsApp Us</a>
-      <a href="https://t.me/Xcellexert" class="btn-secondary">✈️ Telegram</a>
-    </div>
-    <div class="contact-icons">
-      <a href="https://www.instagram.com/mbloves1" class="contact-icon" target="_blank">📸 Instagram</a>
-      <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" class="contact-icon" target="_blank">▶ Sample Work</a>
+  <!-- RESOURCES CALLOUT -->
+  <div style="max-width:1200px;margin:0 auto 3rem;padding:0 4rem;position:relative;z-index:1;" class="fade-in">
+    <div style="background:linear-gradient(135deg,rgba(0,92,255,0.08),rgba(0,229,160,0.06));border:1px solid rgba(0,229,160,0.15);border-radius:16px;padding:2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;">📚 Free SEO Resources for Video Localization</div>
+        <p style="color:var(--muted);font-size:0.9rem;max-width:500px;">Browse 10 keyword-researched articles on AI dubbing, pricing, tools, and YouTube growth strategies — all free.</p>
+      </div>
+      <button onclick="showPage('blog')" class="btn-primary" style="white-space:nowrap;">Read the Resources →</button>
     </div>
   </div>
-</div>
 
-<!-- FOOTER -->
+  <!-- CTA BANNER -->
+  <div style="padding: 0 2rem 7rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
+    <div class="cta-banner fade-in">
+      <h2>Your Next Million Views<br>Are in a Different Language</h2>
+      <p>Let's unlock them together. Reach out today — your first consultation is completely free.</p>
+      <div class="cta-buttons">
+        <a href="https://wa.me/2349032365125" class="btn-primary" target="_blank">💬 WhatsApp Us</a>
+        <a href="https://t.me/Xcellexert" class="btn-secondary" target="_blank">✈️ Telegram</a>
+      </div>
+      <div class="contact-icons">
+        <a href="https://www.instagram.com/mbloves1" class="contact-icon" target="_blank">📸 Instagram</a>
+        <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" class="contact-icon" target="_blank">▶ Sample Work</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page-home -->
+
+
+<!-- ══════════════════════════════════════════════════
+     PAGE: BLOG / SEO RESOURCES
+══════════════════════════════════════════════════ -->
+<div id="page-blog" class="page-section">
+
+  <div class="blog-hero">
+    <div class="blog-header-tag">SEO Content Resources</div>
+    <h1>Video Localization<br><span>Guides & Strategy</span></h1>
+    <p>10 keyword-researched articles on AI dubbing, pricing, tools, and YouTube growth — built to rank and drive qualified traffic. Selected from 40 analyzed topics.</p>
+  </div>
+
+  <nav class="blog-tab-nav">
+    <button class="blog-tab-btn active" onclick="showBlogTab('analysis', this)">📊 Topic Analysis (40)</button>
+    <button class="blog-tab-btn" onclick="showBlogTab('articles', this)">✍️ Articles (10)</button>
+  </nav>
+
+  <!-- ─── ANALYSIS TAB ─── -->
+  <div id="btab-analysis" class="blog-tab-content active">
+  <div class="blog-main">
+
+    <div class="blog-stats">
+      <div class="bstat"><div class="bstat-num">40</div><div class="bstat-label">Topics Analyzed</div></div>
+      <div class="bstat"><div class="bstat-num">10</div><div class="bstat-label">Top Picks</div></div>
+      <div class="bstat"><div class="bstat-num">3</div><div class="bstat-label">Scoring Criteria</div></div>
+      <div class="bstat"><div class="bstat-num">500–800</div><div class="bstat-label">Words/Article</div></div>
+    </div>
+
+    <div class="blog-section-title">Scoring Framework</div>
+    <div class="scoring-grid">
+      <div class="score-card"><div class="score-card-title">① Commercial Intent</div><div class="score-card-desc">Does the searcher want to buy, use, or hire? High = pushes directly to your service.</div></div>
+      <div class="score-card"><div class="score-card-title">② SEO Winability</div><div class="score-card-desc">Long-tail, specific = lower competition, easier to rank for a newer site.</div></div>
+      <div class="score-card"><div class="score-card-title">③ Audience Coverage</div><div class="score-card-desc">Topics that speak to creators, businesses, AND freelancers simultaneously score highest.</div></div>
+    </div>
+
+    <div class="blog-section-title">All 40 Topics Scored</div>
+    <div class="analysis-wrap">
+    <table class="analysis-table">
+      <thead><tr><th>#</th><th>Topic</th><th>Intent</th><th>Competition</th><th>Audience</th><th>Score</th><th>Pick?</th></tr></thead>
+      <tbody>
+        <tr class="sel"><td>1</td><td><div class="topic-title">Best AI Dubbing Apps: Which One Should You Choose?</div><div class="topic-intent">Comparison / tool selection</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge high">9</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr><td>2</td><td><div class="topic-title">How to Dub a Video: Step-by-Step for Beginners</div><div class="topic-intent">How-to / tutorial</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-red">High</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr class="sel"><td>3</td><td><div class="topic-title">Free vs Paid Dubbing Software: What's Actually Worth It?</div><div class="topic-intent">Comparison / decision</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge high">8</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr class="sel"><td>4</td><td><div class="topic-title">How Much Does It Cost to Dub a Video?</div><div class="topic-intent">Pricing research</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge high">9</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr><td>5</td><td><div class="topic-title">Professional Video Dubbing: What to Expect</div><div class="topic-intent">Process explainer</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr class="sel"><td>6</td><td><div class="topic-title">Can AI Dubbing Sound Natural? Testing the Latest Tools</div><div class="topic-intent">Evaluation / trust-building</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge high">9</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr><td>7</td><td><div class="topic-title">Dubbing Videos into Multiple Languages: A Complete Guide</div><div class="topic-intent">How-to guide</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-red">High</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr class="sel"><td>8</td><td><div class="topic-title">YouTube Video Dubbing: Grow Your Channel with Multiple Languages</div><div class="topic-intent">Growth strategy</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge high">9</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr><td>9</td><td><div class="topic-title">How to Dub Marketing Videos Without Breaking Your Budget</div><div class="topic-intent">Budget guide</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>10</td><td><div class="topic-title">Lip-Sync Dubbing: How Does It Work and Is It Worth It?</div><div class="topic-intent">Technical explainer</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr class="sel"><td>11</td><td><div class="topic-title">Best Dubbing Tools for Content Creators in 2026</div><div class="topic-intent">Tool list / comparison</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge high">8</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr class="sel"><td>12</td><td><div class="topic-title">Should You Use AI Dubbing or Hire a Voice Actor?</div><div class="topic-intent">Decision comparison</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge high">9</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr><td>13</td><td><div class="topic-title">How to Improve Your Video Dubbing Quality</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>14</td><td><div class="topic-title">Dubbing Your Existing Videos: Can You Really Grow Faster?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr class="sel"><td>15</td><td><div class="topic-title">What Is Video Localization and Do You Really Need It?</div><div class="topic-intent">Definition + decision</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge high">8</div></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+        <tr><td>16</td><td><div class="topic-title">Professional Voice Actors vs AI Dubbing: Which Wins?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>17</td><td><div class="topic-title">How to Find the Best Video Dubbing Service for Your Needs</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>18</td><td><div class="topic-title">Dubbing for UGC Videos: Does AI Really Work Well?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>19</td><td><div class="topic-title">Can You Make Money Dubbing Videos? A Realistic Look</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Freelancers</span></td><td><div class="score-badge low">5</div></td><td>—</td></tr>
+        <tr><td>20</td><td><div class="topic-title">Video Dubbing Mistakes to Avoid for Professional Results</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>21</td><td><div class="topic-title">How Long Does It Take to Dub a Video?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>22</td><td><div class="topic-title">Best Dubbing Platforms for Freelancers and Creators</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">Freelancers</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>23</td><td><div class="topic-title">Dubbing Video Games: What's the Best Approach?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Niche</span></td><td><div class="score-badge low">4</div></td><td>—</td></tr>
+        <tr><td>24</td><td><div class="topic-title">How to Dub Educational Videos for Global Classrooms</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>25</td><td><div class="topic-title">English to Spanish Video Dubbing: Complete How-To</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>26</td><td><div class="topic-title">Is Professional Video Dubbing Worth the Investment?</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>27</td><td><div class="topic-title">Video Dubbing for Small Businesses: Budget-Friendly Options</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>28</td><td><div class="topic-title">How to Start a Dubbing Business: Complete Beginner's Guide</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Freelancers</span></td><td><div class="score-badge low">4</div></td><td>—</td></tr>
+        <tr><td>29</td><td><div class="topic-title">Real Voices vs Synthetic: Which AI Dubbing Sounds Better?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>30</td><td><div class="topic-title">Dubbing Software Comparison: Features That Actually Matter</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>31</td><td><div class="topic-title">Can You Dub a Movie or Is That Only for Professionals?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Niche</span></td><td><div class="score-badge low">4</div></td><td>—</td></tr>
+        <tr><td>32</td><td><div class="topic-title">How to Get Started with Video Dubbing as a Beginner</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-red">High</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">5</div></td><td>—</td></tr>
+        <tr><td>33</td><td><div class="topic-title">Dubbing Quality Standards: What Makes Professional Sound?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Business</span></td><td><div class="score-badge med">5</div></td><td>—</td></tr>
+        <tr><td>34</td><td><div class="topic-title">Video Dubbing Turnaround Time: What's Realistic?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">5</div></td><td>—</td></tr>
+        <tr><td>35</td><td><div class="topic-title">Should Influencers Dub Videos for International Growth?</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>36</td><td><div class="topic-title">How AI Dubbing Can Expand Your Audience 10x Faster</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>37</td><td><div class="topic-title">Best Voice Options for Dubbing: Natural Sounding Alternatives</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-orange">Medium</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+        <tr><td>38</td><td><div class="topic-title">Video Dubbing Pricing Guide: What Should You Actually Pay?</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>39</td><td><div class="topic-title">How to Choose Between DIY and Professional Video Dubbing</div></td><td><span class="pill pill-blue">Transactional</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">All</span></td><td><div class="score-badge med">7</div></td><td>—</td></tr>
+        <tr><td>40</td><td><div class="topic-title">Video Dubbing Trends: What's Working Right Now for Creators</div></td><td><span class="pill pill-purple">Informational</span></td><td><span class="pill pill-green">Low</span></td><td><span class="pill pill-green">Creators</span></td><td><div class="score-badge med">6</div></td><td>—</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="why-box">
+      <div class="why-box-title">Why These 10 Were Chosen</div>
+      <div class="why-box-text">The 10 selected topics all share: <strong style="color:var(--text);">transactional or high-commercial intent</strong> (searcher is ready to use or buy a service), <strong style="color:var(--text);">low-to-medium competition</strong> (winnable for a newer domain), and <strong style="color:var(--text);">broad audience fit</strong> (answer applies to creators, businesses, and freelancers simultaneously). Topics about "starting a dubbing business" or "dubbing a movie" were dropped — they attract people who want to compete, not hire.</div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ─── ARTICLES TAB ─── -->
+  <div id="btab-articles" class="blog-tab-content">
+  <div class="blog-main">
+
+    <!-- Article 1 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 01 of 10</div><div class="article-title">Best AI Dubbing Apps in 2026: Which One Should You Choose?</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 9/10</span><span class="pill pill-orange">~650 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">best AI dubbing app</span><span class="kw-tag">AI dubbing software 2026</span><span class="kw-tag">video dubbing tool</span><span class="kw-tag">best dubbing app for YouTube</span><span class="kw-tag">AI video dubbing</span><span class="kw-tag">dubbing software comparison</span></div></div>
+      <div class="article-body">
+<h2>Best AI Dubbing Apps in 2026: Which One Should You Choose?</h2>
+<p>The AI dubbing market has exploded. There are now over 40 platforms claiming to translate your videos instantly, but most creators and businesses still waste hours testing tools that sound robotic, drift out of sync, or lock your files behind expensive enterprise gates.</p>
+<p>This guide breaks down what actually separates a good AI dubbing app from a frustrating one — and which type of tool fits your specific needs.</p>
+<h2>What Makes an AI Dubbing App Actually Good?</h2>
+<p>Before comparing tools, know what to look for. The best AI dubbing software in 2026 must handle four things well:</p>
+<ul><li><strong>Voice naturalness</strong> — Does the dubbed voice sound human or robotic?</li><li><strong>Lip sync accuracy</strong> — Is the audio aligned to the speaker's mouth movement?</li><li><strong>Language coverage</strong> — How many languages does it support, and how well?</li><li><strong>Turnaround speed</strong> — Can it process a 10-minute video in minutes, not days?</li></ul>
+<h2>The Three Types of Dubbing Apps</h2>
+<h3>1. Fully Automated AI Tools</h3>
+<p>Upload your video, pick a language, download a dubbed version — no editing required. These are the fastest and cheapest option, ideal for content creators dubbing weekly videos. Quality has improved dramatically in 2026: top platforms now preserve the original speaker's tone and rhythm across 10+ languages.</p>
+<h3>2. AI + Human Review (Hybrid)</h3>
+<p>A managed service where AI does the first pass and human editors clean up timing, terminology, and emotional delivery. Turnaround is 24–48 hours instead of minutes, but quality is significantly closer to traditional studio dubbing.</p>
+<h3>3. DIY Studio Platforms</h3>
+<p>Tools that give you an editable transcript, per-segment timing controls, and voice cloning. Best for agencies and freelancers who need full control and want to offer dubbing as a professional service.</p>
+<h2>Key Features to Compare Before You Commit</h2>
+<ul><li><strong>Free tier availability</strong> — Test before spending. Look for tools offering at least 3–5 free minutes.</li><li><strong>Pricing model</strong> — Per minute vs. monthly subscription. For high-volume teams, per-minute often scales better.</li><li><strong>Voice cloning</strong> — Can it clone your original speaker's voice, or does it replace it with a generic AI voice?</li><li><strong>Output formats</strong> — Does it export subtitles alongside the dubbed audio, or just video?</li></ul>
+<h2>Which Type of App Is Right for You?</h2>
+<p>If you're a <strong>YouTuber or content creator</strong>, a fast automated tool gives you the best ROI. If you're a <strong>business or marketer</strong>, a hybrid service protects your brand from mistranslations. If you're a <strong>freelancer or agency</strong>, a studio-style platform with client-shareable workspaces delivers professional results under your own brand.</p>
+<div class="art-cta-box"><strong>Ready to find your match?</strong> XcellVoxLaps handles every type of project — from quick single-video dubs to full multilingual content pipelines. <a href="https://wa.me/2349032365125" target="_blank">Get started on WhatsApp →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 2 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 02 of 10</div><div class="article-title">How Much Does It Cost to Dub a Video? (2026 Pricing Guide)</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 9/10</span><span class="pill pill-orange">~620 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">how much does it cost to dub a video</span><span class="kw-tag">video dubbing cost</span><span class="kw-tag">video dubbing pricing</span><span class="kw-tag">AI dubbing price per minute</span><span class="kw-tag">professional video dubbing rates</span></div></div>
+      <div class="article-body">
+<h2>How Much Does It Cost to Dub a Video? (2026 Pricing Guide)</h2>
+<p>Dubbing pricing follows a clear structure — once you understand the three main tiers, you'll know exactly what to budget before reaching out to any vendor.</p>
+<h3>Tier 1: Automated AI Dubbing ($0–$50/month)</h3>
+<p>Fully automated tools work on subscription or credit models. Most offer a free tier (typically 3–10 free minutes). Paid plans run $5–$50/month covering 30–250 minutes. Cost per minute: roughly $0.04–$0.20. Ideal for YouTubers and content creators.</p>
+<h3>Tier 2: Managed AI Dubbing ($50–$300 per video)</h3>
+<p>A human-in-the-loop service where AI does the heavy lifting and editors review quality. A 10-minute video dubbed into one language typically costs $80–$200. Ideal for businesses and e-learning companies who need accuracy above speed.</p>
+<h3>Tier 3: Professional Studio Dubbing ($500–$10,000+ per video)</h3>
+<p>Traditional dubbing with voice actors, a recording studio, and a director. The gold standard for feature films and premium brand content. Most companies use a hybrid approach: AI for 80–90% of content, studio for hero pieces.</p>
+<h2>What Actually Drives the Cost Up?</h2>
+<ul><li><strong>Number of languages</strong> — Each additional language multiplies cost in managed tiers</li><li><strong>Video length</strong> — Billed per minute in most AI services</li><li><strong>Lip-sync requirement</strong> — Lip-synced dubbing costs more than audio-only</li><li><strong>Turnaround time</strong> — Rush delivery adds 20–50% to managed service costs</li></ul>
+<h2>Real Cost Comparison for a 30-min Video in 5 Languages</h2>
+<ul><li><strong>AI self-serve:</strong> ~$60–$150 total</li><li><strong>Managed AI:</strong> ~$1,500–$3,000 total</li><li><strong>Traditional studio:</strong> ~$15,000–$40,000 total</li></ul>
+<p>The quality gap between these tiers has narrowed significantly. For most business content, managed AI dubbing now delivers 90–95% of studio quality at 5–10% of the cost.</p>
+<div class="art-cta-box"><strong>Get an exact quote for your project.</strong> XcellVoxLaps offers transparent per-video pricing with no hidden fees. <a href="https://wa.me/2349032365125" target="_blank">Get a free quote on WhatsApp →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 3 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 03 of 10</div><div class="article-title">Free vs Paid Dubbing Software: What's Actually Worth It?</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 8/10</span><span class="pill pill-orange">~600 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">free video dubbing software</span><span class="kw-tag">free AI dubbing tool</span><span class="kw-tag">best free dubbing software</span><span class="kw-tag">paid dubbing software worth it</span><span class="kw-tag">free vs paid dubbing</span></div></div>
+      <div class="article-body">
+<h2>Free vs Paid Dubbing Software: What's Actually Worth It?</h2>
+<p>Everyone wants to start with a free dubbing tool. That's smart — you should test before spending. But "free" in AI dubbing usually comes with catches that are easy to miss until you're already invested in a workflow.</p>
+<h2>What Free Dubbing Tools Actually Include</h2>
+<ul><li>3–10 minutes of dubbed video per month</li><li>A limited selection of AI voices (not the best ones)</li><li>Watermarks on exported videos</li><li>No voice cloning (your speaker's voice is not preserved)</li><li>Limited language options (usually 20–30 vs 100+ on paid)</li></ul>
+<h2>The Hidden Cost of "Free"</h2>
+<p>The biggest issue isn't what they cost — it's time. Free tiers are designed to let you feel the product, not build a workflow on it. You'll hit monthly minute caps quickly, re-export to remove watermarks, or spend hours manually fixing timing that paid tiers handle automatically. If you're dubbing more than 2–3 videos/month, free is more expensive in time than a $15–$50/month subscription.</p>
+<h2>When Free Is Genuinely Enough</h2>
+<ul><li>You're dubbing a one-off personal project with no commercial intent</li><li>You want to test whether dubbing improves engagement before committing a budget</li><li>The content is internal-only where watermarks don't matter</li></ul>
+<h2>When Paid Is Clearly Worth It</h2>
+<ul><li>You publish more than 4 videos per month and want consistency</li><li>Your content is customer-facing and brand quality matters</li><li>You need voice cloning to preserve the original speaker's identity</li><li>You're building a multilingual content library</li></ul>
+<div class="art-cta-box"><strong>Not sure which fits your volume?</strong> XcellVoxLaps offers your first video free — no watermarks — so you see real quality before any decision. <a href="https://wa.me/2349032365125" target="_blank">Try it on WhatsApp →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 4 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 04 of 10</div><div class="article-title">Can AI Dubbing Sound Natural? We Tested the Latest Tools</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 9/10</span><span class="pill pill-orange">~640 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">can AI dubbing sound natural</span><span class="kw-tag">AI dubbing quality</span><span class="kw-tag">does AI dubbing sound real</span><span class="kw-tag">natural sounding AI dubbing</span><span class="kw-tag">AI dubbing vs human voice quality</span></div></div>
+      <div class="article-body">
+<h2>Can AI Dubbing Sound Natural? We Tested the Latest Tools</h2>
+<p>In 2026, the answer is more nuanced — and significantly more encouraging for anyone put off by early-generation robotic AI voices.</p>
+<h2>How AI Dubbing Quality Has Changed in 2026</h2>
+<ul><li><strong>Prosody models finally caught up.</strong> Previous tools nailed pronunciation but sounded rhythmically off. New models treat sentence rhythm as a primary quality signal, not an afterthought.</li><li><strong>Cross-language voice identity.</strong> Top platforms can clone a speaker's voice and preserve it across 10+ languages. The dubbed version sounds like you — just speaking Spanish.</li></ul>
+<h2>Where AI Dubbing Still Struggles</h2>
+<ul><li><strong>Multiple overlapping speakers.</strong> Roundtables and fast-paced interviews still challenge AI.</li><li><strong>Heavy background music.</strong> AI struggles to cleanly separate voice from loud soundtracks.</li><li><strong>Emotional high-stakes content.</strong> Dramatic performances can lose emotional delivery.</li><li><strong>Idiomatic translation.</strong> AI translates words accurately but can miss cultural idioms.</li></ul>
+<h2>Where AI Dubbing Sounds Completely Natural</h2>
+<ul><li>Single-speaker talking-head videos (tutorials, explainers, product demos)</li><li>E-learning and training content with clear speech</li><li>YouTube-style commentary and educational content</li><li>Marketing videos with clean original audio</li></ul>
+<p>For these formats, AI-dubbed content in 2026 passes the native speaker test for most audiences. Dubbed content can generate 60–78% more watch time in the target language compared to subtitles-only content.</p>
+<div class="art-cta-box"><strong>Hear it for yourself.</strong> Submit a video and XcellVoxLaps will send you an AI-dubbed version in your target language — no commitment. <a href="https://wa.me/2349032365125" target="_blank">Get a free sample →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 5 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 05 of 10</div><div class="article-title">YouTube Video Dubbing: The Creator's Guide to Going Global</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 9/10</span><span class="pill pill-orange">~660 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">YouTube video dubbing</span><span class="kw-tag">dub YouTube videos another language</span><span class="kw-tag">grow YouTube channel with dubbing</span><span class="kw-tag">YouTube multilingual dubbing</span><span class="kw-tag">expand YouTube audience dubbing</span></div></div>
+      <div class="article-body">
+<h2>YouTube Video Dubbing: The Creator's Guide to Going Global</h2>
+<p>Most YouTube creators are sitting on a massive untapped audience. If your content performs in English, there's a statistically strong chance it will perform in Spanish, Portuguese, Hindi, or Indonesian — languages spoken by billions who actively search for content in their own language.</p>
+<h2>Why Dubbing Outperforms Subtitles for YouTube Growth</h2>
+<p>Subtitles require viewers to read while watching — a fundamentally worse experience than hearing content in their native language. YouTube creators who switch from subtitles to dubbing consistently report 40–60% higher watch time on localized content. Higher watch time signals quality to YouTube's algorithm, which then distributes the video more broadly within that language's audience.</p>
+<h2>Which Languages Should You Dub First?</h2>
+<ul><li><strong>Spanish</strong> — 500M+ native speakers, massive YouTube audience</li><li><strong>Portuguese (Brazilian)</strong> — Brazil is one of the largest YouTube markets globally</li><li><strong>Hindi</strong> — India's YouTube audience is enormous and fast-growing</li><li><strong>Indonesian</strong> — One of the fastest-growing YouTube markets</li><li><strong>Arabic</strong> — High CPM rates, underserved content market</li></ul>
+<h2>How to Set Up a YouTube Dubbing Workflow</h2>
+<ul><li><strong>Step 1:</strong> Start with your 5 best-performing existing videos</li><li><strong>Step 2:</strong> Upload the dubbed version as a separate video with target-language title, description, and tags</li><li><strong>Step 3:</strong> Add both AI-generated subtitles AND the dubbed audio track</li><li><strong>Step 4:</strong> Monitor performance for 30 days, then scale</li></ul>
+<div class="art-cta-box"><strong>Start with your top 5 videos.</strong> XcellVoxLaps will dub them into your priority language and you can upload them this week. <a href="https://wa.me/2349032365125" target="_blank">Get started →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 6 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 06 of 10</div><div class="article-title">Best Dubbing Tools for Content Creators in 2026</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 8/10</span><span class="pill pill-orange">~630 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">best dubbing tools content creators 2026</span><span class="kw-tag">dubbing software for YouTubers</span><span class="kw-tag">AI dubbing for creators</span><span class="kw-tag">best video dubbing software creators</span><span class="kw-tag">multilingual video tool creator</span></div></div>
+      <div class="article-body">
+<h2>Best Dubbing Tools for Content Creators in 2026</h2>
+<p>Content creators have different needs than enterprise media companies. You need speed, simplicity, and a price point that makes sense per video — not a sales call and a six-month contract.</p>
+<h2>What Creators Actually Need From a Dubbing Tool</h2>
+<ul><li><strong>Fast turnaround:</strong> Processing a 10-minute video should take minutes, not hours</li><li><strong>Voice preservation:</strong> A tool that dubs with a generic AI voice loses your personal brand in translation</li><li><strong>Language breadth:</strong> At minimum, Spanish, Portuguese, Hindi, French, German</li><li><strong>No watermarks on affordable plans</strong></li><li><strong>YouTube-ready output</strong> with subtitles bundled</li></ul>
+<h3>Fully Automated (Best for: volume creators)</h3>
+<p>Upload, pick language, download. Modern platforms produce excellent results for single-speaker, clean-audio content — tutorials, commentary, explainers, vlogs.</p>
+<h3>Voice Clone + Edit (Best for: brand consistency)</h3>
+<p>These tools clone your voice first, then use that clone for dubbing. Every language sounds like you — your rhythm, your energy, your tone.</p>
+<h3>Managed Service (Best for: large libraries or complex content)</h3>
+<p>Send your videos, receive publication-ready dubs back. Removes all workflow overhead. Ideal for dubbing back-catalogues or producing in multiple languages simultaneously.</p>
+<h2>Red Flags to Avoid</h2>
+<ul><li>Tools that don't let you preview before paying</li><li>No option to edit the translated script before dubbing</li><li>Platforms with complicated credit systems that make costs hard to predict</li></ul>
+<div class="art-cta-box"><strong>Skip the comparison rabbit hole.</strong> XcellVoxLaps was built for creators — voice cloning included, no watermarks, YouTube-ready output. <a href="https://wa.me/2349032365125" target="_blank">Try your first video free →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 7 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 07 of 10</div><div class="article-title">Should You Use AI Dubbing or Hire a Voice Actor?</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 9/10</span><span class="pill pill-orange">~600 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">AI dubbing vs voice actor</span><span class="kw-tag">should I use AI dubbing</span><span class="kw-tag">hire voice actor for dubbing</span><span class="kw-tag">AI dubbing vs human voice actor</span><span class="kw-tag">voice actor or AI for video</span></div></div>
+      <div class="article-body">
+<h2>Should You Use AI Dubbing or Hire a Voice Actor?</h2>
+<p>AI dubbing has improved enough to genuinely challenge professional voice actors in certain contexts — but human voice actors still win in others. Here's the honest breakdown.</p>
+<h2>Where AI Dubbing Wins</h2>
+<h3>Speed</h3><p>A voice actor needs to be booked, briefed, recorded, and edited — typically 3–7 days minimum per language. AI takes minutes to hours.</p>
+<h3>Cost at Scale</h3><p>A professional voice actor charges $200–$500 for a 10-minute video, per language. For five languages, that's $1,000–$2,500 per video. AI dubbing at the same quality level costs $50–$200 for all five languages combined.</p>
+<h3>Voice Cloning</h3><p>Modern AI can clone the original speaker's voice across languages. Your viewers hear you in Spanish — your rhythm, your energy. A human voice actor, no matter how skilled, sounds like a different person.</p>
+<h2>Where Human Voice Actors Still Win</h2>
+<h3>Emotional Depth</h3><p>For dramatic content — feature films, premium brand storytelling — professional voice actors deliver emotional nuance that AI can't fully match.</p>
+<h3>Cultural Adaptation</h3><p>A native-speaking voice actor can catch cultural idioms, tone shifts, and humor that AI might translate literally but miss culturally.</p>
+<h2>The Practical Decision Framework</h2>
+<ul><li>Dubbing 5+ videos/month in multiple languages → <strong>AI dubbing</strong></li><li>Flagship brand campaign or emotional storytelling → <strong>Human voice actor</strong></li><li>E-learning library of 50+ modules → <strong>AI dubbing with human QA</strong></li><li>Weekly YouTube content → <strong>AI dubbing</strong></li></ul>
+<p>Most serious content operations use a hybrid model: AI for 80–90% of content, human voice talent reserved for pieces that demand it.</p>
+<div class="art-cta-box"><strong>Not sure which route fits your project?</strong> Tell us what you're building and XcellVoxLaps will recommend the right approach. <a href="https://wa.me/2349032365125" target="_blank">Talk to our team →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 8 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 08 of 10</div><div class="article-title">What Is Video Localization and Do You Really Need It?</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 8/10</span><span class="pill pill-orange">~590 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">what is video localization</span><span class="kw-tag">video localization meaning</span><span class="kw-tag">video localization vs translation</span><span class="kw-tag">do I need video localization</span><span class="kw-tag">video localization service</span></div></div>
+      <div class="article-body">
+<h2>What Is Video Localization and Do You Really Need It?</h2>
+<p>Video localization gets used interchangeably with translation and dubbing, but they're not the same thing. Understanding the difference matters because it affects what you buy and whether the result works for your target audience.</p>
+<h2>Translation vs Dubbing vs Localization</h2>
+<p><strong>Translation</strong> converts text from one language to another. <strong>Dubbing</strong> records or generates new audio in the target language. <strong>Localization</strong> goes further — it adapts the entire video for a specific regional audience: tone, cultural references, on-screen text, titles, and sometimes visual elements. A fully localized video feels native; a merely translated one just feels translated.</p>
+<h2>What Video Localization Typically Includes</h2>
+<ul><li>Translated and dubbed audio in the target language</li><li>Translated on-screen text, titles, and lower thirds</li><li>Translated subtitles/captions</li><li>Cultural adaptation of references and humor</li><li>Adjusted title and description optimized for local search</li><li>Regional formatting (date formats, currency, units)</li></ul>
+<h2>Do You Actually Need Full Localization?</h2>
+<ul><li><strong>YouTube tutorials:</strong> Dubbing alone is usually sufficient</li><li><strong>Marketing campaigns:</strong> Full localization is worth it</li><li><strong>E-learning:</strong> Depends on the content — generic skills need dubbing, compliance needs full localization</li><li><strong>Entertainment and storytelling:</strong> Localization is the standard</li></ul>
+<h2>When to Start With Dubbing and Upgrade to Localization</h2>
+<p>Start with quality dubbing. Ship content, measure engagement, identify your top performers, then invest in full localization for those specific pieces. This is cheaper than localizing everything upfront and smarter than waiting for a perfect process.</p>
+<div class="art-cta-box"><strong>XcellVoxLaps offers both.</strong> Start with AI dubbing for speed, upgrade to full localization for your hero content. One team, one workflow. <a href="https://wa.me/2349032365125" target="_blank">See what's included →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 9 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 09 of 10</div><div class="article-title">How to Choose Between DIY and Professional Video Dubbing</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 7/10</span><span class="pill pill-orange">~580 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">DIY video dubbing</span><span class="kw-tag">professional video dubbing service</span><span class="kw-tag">DIY vs professional dubbing</span><span class="kw-tag">when to hire dubbing service</span><span class="kw-tag">self-service video dubbing</span></div></div>
+      <div class="article-body">
+<h2>How to Choose Between DIY and Professional Video Dubbing</h2>
+<p>The line between DIY and professional dubbing has blurred dramatically in 2026. The best self-service tools now produce results that rival what professional services delivered two years ago.</p>
+<h2>The DIY Dubbing Path: What It Actually Requires</h2>
+<p>For a 10-minute video, the DIY process takes 20–45 minutes for a first-timer and closer to 10–15 minutes once you're familiar with the tool. You'll need to: upload your video, review the auto-generated transcript for errors, adjust timing on any segments that feel off, then export and upload.</p>
+<h2>Where DIY Falls Short</h2>
+<ul><li><strong>Volume:</strong> Managing 20+ individual uploads manually becomes a bottleneck</li><li><strong>Complex translation:</strong> Technical jargon can produce errors you'd need to catch manually</li><li><strong>High-stakes content:</strong> Where a mistranslation has real consequences</li><li><strong>Multiple languages at once:</strong> Requires significant time or a team</li></ul>
+<h2>The Decision Framework</h2>
+<p>Choose <strong>DIY</strong> when: you have 1–5 videos per month, your content is straightforward, and budget is the primary constraint. Choose <strong>Professional service</strong> when: you're dubbing at high volume, your content is customer-facing, or you need multiple languages simultaneously. Choose <strong>Hybrid</strong> when: you use a professional service for new releases and a DIY tool to work through your back catalogue.</p>
+<div class="art-cta-box"><strong>XcellVoxLaps works both ways.</strong> Use the self-service workflow at your own pace, or hand your project to our team and get back publication-ready files. <a href="https://wa.me/2349032365125" target="_blank">Start here →</a></div>
+      </div>
+    </div>
+
+    <!-- Article 10 -->
+    <div class="article-card">
+      <div class="article-meta"><div><div class="article-num">Article 10 of 10</div><div class="article-title">Video Dubbing for Small Businesses: Affordable Options That Work</div><div class="article-pills"><span class="pill pill-blue">Transactional</span><span class="pill pill-green">Score: 7/10</span><span class="pill pill-orange">~600 words</span></div></div></div>
+      <div class="article-kw"><div class="kw-label">Target Keywords</div><div class="kw-list"><span class="kw-tag">video dubbing for small business</span><span class="kw-tag">affordable video dubbing</span><span class="kw-tag">small business dubbing service</span><span class="kw-tag">cheap video dubbing</span><span class="kw-tag">multilingual video for small business</span></div></div>
+      <div class="article-body">
+<h2>Video Dubbing for Small Businesses: Affordable Options That Work</h2>
+<p>Small businesses often assume video dubbing is an enterprise luxury. That assumption is outdated. AI dubbing in 2026 has made multilingual video completely accessible for businesses of any size.</p>
+<h2>Why Small Businesses Are Dubbing Videos in 2026</h2>
+<p>A Spanish-speaking customer in Miami, a Portuguese-speaking buyer in Brazil, or a French-speaking prospect in Quebec is far more likely to trust and convert from a video in their own language. For e-commerce, online courses, and SaaS products with international users, dubbing a handful of key videos often pays for itself from a single converted customer.</p>
+<h3>Option 1: Self-Service AI Tool ($5–$50/month)</h3>
+<p>The lowest-cost entry point. Ideal for clean, single-speaker content (explainer videos, product demos, how-to content). Cost per video is often under $5 on a monthly plan.</p>
+<h3>Option 2: Per-Video Managed Service ($50–$200/video)</h3>
+<p>Send a video, receive a dubbed version back — reviewed by humans, ready to publish. Best for businesses with 2–5 key videos they want to localize properly without building a recurring workflow.</p>
+<h3>Option 3: Bundled Package</h3>
+<p>Fixed price for a set of videos — typically 5–10 videos into 1–2 languages. Best value for businesses wanting a one-time localization of core content without an ongoing subscription.</p>
+<h2>Which Videos Should Small Businesses Dub First?</h2>
+<ul><li>Your main product or service explainer</li><li>Your homepage or landing page video</li><li>Your most-shared social video</li><li>Customer testimonials — social proof in the viewer's language is disproportionately powerful</li></ul>
+<div class="art-cta-box"><strong>Built for businesses at every size.</strong> XcellVoxLaps offers per-video pricing — no subscriptions required for small projects. <a href="https://wa.me/2349032365125" target="_blank">Get a quote for your first video →</a></div>
+      </div>
+    </div>
+
+  </div>
+  </div><!-- end btab-articles -->
+
+</div><!-- end page-blog -->
+
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
 <footer>
-  <div class="logo">Xcell<span>expert</span></div>
+  <a class="logo" href="#" onclick="showPage('home')">XcellVox<span>Laps</span></a>
   <ul class="footer-links">
-    <li><a href="#services">Services</a></li>
-    <li><a href="#process">Process</a></li>
-    <li><a href="#languages">Languages</a></li>
-    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#" onclick="showPage('home')">Home</a></li>
+    <li><a href="#" onclick="showPage('home'); scrollTo('#services')">Services</a></li>
+    <li><a href="#" onclick="showPage('home'); scrollTo('#pricing')">Pricing</a></li>
+    <li><a href="#" onclick="showPage('blog')">Resources</a></li>
+    <li><a href="https://wa.me/2349032365125" target="_blank">Contact</a></li>
   </ul>
-  <p>© 2026 Xcellexpert. All rights reserved.</p>
+  <p>© 2026 XcellVoxLaps. All rights reserved.</p>
 </footer>
 
 <script>
-  // Scroll animation
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
+  // Page navigation
+  function showPage(name) {
+    document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Re-trigger fade-in observer
+    setTimeout(() => {
+      document.querySelectorAll('.fade-in').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) el.classList.add('visible');
+      });
+    }, 100);
+    return false;
+  }
+
+  function scrollTo(id) {
+    setTimeout(() => {
+      const el = document.querySelector(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+
+  // Blog tab switching
+  function showBlogTab(name, btn) {
+    document.querySelectorAll('.blog-tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.blog-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btab-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.08 });
 
-  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
