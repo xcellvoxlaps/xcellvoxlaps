@@ -1,1091 +1,2094 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XcellVoxLaps — Global Video Localization</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #09090B;
-  --surface: #111114;
-  --card: #17171C;
-  --card2: #1E1E25;
-  --border: rgba(255,255,255,0.06);
-  --border-h: rgba(255,255,255,0.13);
-  --accent: #00E09A;
-  --adim: rgba(0,224,154,0.09);
-  --aborder: rgba(0,224,154,0.22);
-  --blue: #3B82F6;
-  --text: #EDEDF0;
-  --sub: #8B8D99;
-  --faint: #3A3A42;
-  --r: 10px; --rl: 16px; --rxl: 22px;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:0.45;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XcellVoxLaps — Global Video Localization</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:60px;background:rgba(9,9,11,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
-.logo{font-family:'Instrument Serif',serif;font-size:1.25rem;color:var(--text);text-decoration:none;letter-spacing:-0.01em;}
-.logo em{font-style:italic;color:var(--accent);}
-.nav-links{display:flex;gap:0.15rem;align-items:center;}
-.nav-links a{color:var(--sub);text-decoration:none;font-size:0.81rem;font-weight:400;padding:0.4rem 0.85rem;border-radius:6px;transition:color 0.16s,background 0.16s;}
-.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04);}
-.nav-cta{background:var(--accent)!important;color:#000!important;font-weight:600!important;border-radius:7px!important;padding:0.4rem 1.1rem!important;font-size:0.81rem!important;transition:opacity 0.16s,transform 0.16s!important;}
-.nav-cta:hover{opacity:0.85!important;transform:translateY(-1px)!important;}
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --black:   #07070A;
+      --dark:    #0D0D12;
+      --card:    #131318;
+      --card2:   #1A1A22;
+      --border:  rgba(255, 255, 255, 0.07);
+      --border-h:rgba(255, 255, 255, 0.14);
+      --green:   #00E5A0;
+      --green-d: rgba(0, 229, 160, 0.08);
+      --green-b: rgba(0, 229, 160, 0.20);
+      --blue:    #4F8EF7;
+      --text:    #E8E8ED;
+      --muted:   #7A7D8C;
+      --faint:   #2A2A35;
+      --r-sm: 8px;
+      --r:    14px;
+      --r-lg: 20px;
+    }
 
-/* PAGE SYSTEM */
-.pg{display:none;}.pg.on{display:block;}
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* ─── BUTTONS ─── */
-.btn{display:inline-flex;align-items:center;gap:0.45rem;padding:0.78rem 1.6rem;border-radius:var(--r);font-size:0.87rem;font-weight:500;text-decoration:none;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all 0.18s;white-space:nowrap;}
-.btn-green{background:var(--accent);color:#000;font-weight:700;}
-.btn-green:hover{background:#00ffb3;transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,224,154,0.25);}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
-.btn-ghost:hover{border-color:var(--border-h);background:rgba(255,255,255,0.03);transform:translateY(-1px);}
-.btn-sm{padding:0.5rem 1rem;font-size:0.78rem;}
-.btn-wa{background:#25D366;color:#fff;font-weight:700;}
-.btn-wa:hover{background:#20bd5a;transform:translateY(-2px);box-shadow:0 10px 28px rgba(37,211,102,0.25);}
-.btn-tg{background:#229ED9;color:#fff;font-weight:600;}
-.btn-tg:hover{background:#1a8bbf;transform:translateY(-2px);}
+    /* Subtle grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
 
-/* ─── HERO ─── */
-.hero-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:7rem 3rem 5rem;position:relative;overflow:hidden;text-align:center;}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,224,154,0.07) 0%, transparent 65%), radial-gradient(ellipse 50% 40% at 80% 80%, rgba(59,130,246,0.05) 0%, transparent 60%);pointer-events:none;}
-.hero-inner{position:relative;z-index:1;max-width:880px;}
-.hero-tag{display:inline-flex;align-items:center;gap:0.45rem;font-size:0.71rem;font-weight:500;letter-spacing:0.09em;text-transform:uppercase;color:var(--accent);border:1px solid var(--aborder);background:var(--adim);padding:0.3rem 0.9rem;border-radius:99px;margin-bottom:2rem;animation:fadeup 0.9s ease both;}
-.dot-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dpulse 2s infinite;}
-@keyframes dpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
-.hero-h1{font-family:'Instrument Serif',serif;font-size:clamp(3rem,6.5vw,5.8rem);font-weight:400;line-height:1.05;letter-spacing:-0.025em;margin-bottom:1.5rem;animation:fadeup 0.9s 0.08s ease both;}
-.hero-h1 .it{font-style:italic;color:var(--accent);}
-.hero-desc{font-size:1.05rem;color:var(--sub);max-width:620px;margin:0 auto 2.5rem;line-height:1.82;font-weight:300;animation:fadeup 0.9s 0.16s ease both;}
-.hero-btns{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;animation:fadeup 0.9s 0.24s ease both;}
-@keyframes fadeup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    /* ============================================================
+       PAGE SYSTEM
+    ============================================================ */
+    .page { display: none; }
+    .page.active { display: block; }
 
-/* ─── PROOF BAR ─── */
-.proof-bar{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:stretch;justify-content:center;flex-wrap:wrap;}
-.proof-item{display:flex;flex-direction:column;align-items:center;padding:1.8rem 3rem;border-right:1px solid var(--border);}
-.proof-item:last-child{border-right:none;}
-.proof-num{font-family:'Instrument Serif',serif;font-size:2.1rem;font-weight:400;color:var(--accent);line-height:1;margin-bottom:0.25rem;}
-.proof-label{font-size:0.7rem;color:var(--sub);letter-spacing:0.06em;text-transform:uppercase;}
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      background: rgba(7, 7, 10, 0.88);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
 
-/* ─── TICKER ─── */
-.ticker-track{overflow:hidden;background:var(--bg);border-bottom:1px solid var(--border);padding:0.6rem 0;}
-.ticker-inner{display:flex;width:max-content;animation:tick 28s linear infinite;}
-.ticker-item{display:flex;align-items:center;gap:0.65rem;padding:0 2.2rem;font-size:0.77rem;color:var(--sub);white-space:nowrap;letter-spacing:0.02em;}
-.ticker-sep{color:var(--faint);}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .logo em { font-style: italic; color: var(--green); }
 
-/* ─── SECTIONS ─── */
-.sec{padding:6rem 3rem;max-width:1100px;margin:0 auto;position:relative;z-index:1;}
-.sec-wide{background:var(--surface);position:relative;z-index:1;}
-.sec-inner{max-width:1100px;margin:0 auto;padding:6rem 3rem;}
-.sec-top{margin-bottom:3rem;}
-.eyebrow{font-size:0.69rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.7rem;display:block;}
-.heading{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:400;line-height:1.15;letter-spacing:-0.02em;margin-bottom:0.8rem;}
-.heading .it{font-style:italic;}
-.sub-text{color:var(--sub);font-size:0.93rem;line-height:1.78;max-width:520px;}
-.div-line{border:none;border-top:1px solid var(--border);}
+    .nav-links { display: flex; align-items: center; gap: 0.2rem; }
+    .nav-links a {
+      font-size: 0.79rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.38rem 0.9rem;
+      border-radius: var(--r-sm);
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-cta {
+      background: var(--green) !important;
+      color: #000 !important;
+      font-weight: 700 !important;
+      border-radius: var(--r-sm) !important;
+    }
+    .nav-cta:hover { opacity: 0.88 !important; }
 
-/* ─── VIDEO SLOTS ─── */
-.samples-tabs{display:flex;gap:0.35rem;margin-bottom:1.5rem;flex-wrap:wrap;}
-.s-tab{font-size:0.77rem;padding:0.38rem 0.85rem;border-radius:6px;border:1px solid var(--border);color:var(--sub);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
-.s-tab.active{border-color:var(--aborder);color:var(--accent);background:var(--adim);}
-.s-panel{display:none;}.s-panel.active{display:block;}
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.8rem 1.65rem;
+      border-radius: var(--r-sm);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--green); color: #000; }
+    .btn-primary:hover { background: #00ffb5; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,229,160,0.22); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border-h); }
+    .btn-outline:hover { border-color: var(--green-b); color: var(--green); transform: translateY(-1px); }
+    .btn-sm { padding: 0.5rem 1.1rem; font-size: 0.77rem; }
+    .btn-wa { background: #25D366; color: #fff; }
+    .btn-wa:hover { background: #1dbf57; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37,211,102,0.22); }
+    .btn-tg { background: #229ED9; color: #fff; }
+    .btn-tg:hover { background: #1a88bd; transform: translateY(-2px); }
 
-.sample-box{background:var(--card);border:1px solid var(--border);border-radius:var(--rxl);overflow:hidden;max-width:900px;margin-left:auto;margin-right:auto;}
-.sample-header{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;}
-.sample-meta{font-size:0.78rem;color:var(--sub);}
-.sample-meta strong{color:var(--text);}
-.sample-badges{display:flex;gap:0.4rem;flex-wrap:wrap;}
-.sbadge{font-size:0.65rem;padding:0.16rem 0.55rem;border-radius:99px;border:1px solid var(--border);color:var(--sub);}
-.sbadge.g{border-color:var(--aborder);color:var(--accent);background:var(--adim);}
-.sample-grid{display:grid;grid-template-columns:1fr 1fr;}
-.sample-col{padding:1.1rem;}
-.sample-col:first-child{border-right:1px solid var(--border);}
-.col-label{font-size:0.66rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--sub);margin-bottom:0.55rem;display:flex;align-items:center;gap:0.4rem;}
-.lchip{font-family:'JetBrains Mono',monospace;font-size:0.63rem;padding:0.1rem 0.45rem;border-radius:4px;background:rgba(255,255,255,0.07);color:var(--text);}
-.lchip.es{background:rgba(0,224,154,0.12);color:var(--accent);}
-.lchip.pt{background:rgba(59,130,246,0.13);color:#93c5fd;}
-.lchip.hi{background:rgba(251,146,60,0.12);color:#fb923c;}
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 3rem 6rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* VIDEO SLOT — self-contained, never overflows its column */
-.vslot-wrap{width:100%;max-width:100%;}
-.vslot{
-  display:block;
-  position:relative;
-  width:100%;
-  /* 16:9 via padding trick — works for every embed type */
-  padding-top:56.25%;
-  background:var(--card2);
-  border:1px dashed var(--faint);
-  border-radius:var(--r);
-  overflow:hidden;
-  cursor:pointer;
-  transition:border-color 0.2s,background 0.2s;
-  text-decoration:none;
-  /* hard cap so it never goes taller than viewport */
-  max-height:320px;
-}
-.vslot:hover{border-color:var(--accent);background:rgba(0,224,154,0.025);}
-.vslot.live{border-style:solid;border-color:var(--border);background:#000;cursor:default;}
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% -5%, rgba(0,229,160,0.09) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 40% at 85% 85%, rgba(79,142,247,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
 
-/* Everything inside sits on top of the padding-top spacer */
-.vslot > *{position:absolute;}
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+    }
 
-/* Actual media — fills the slot perfectly */
-.vslot video,
-.vslot iframe{
-  inset:0;
-  top:0; left:0;
-  width:100%;
-  height:100%;
-  max-height:320px;
-  object-fit:cover;
-  border:none;
-  display:block;
-}
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green-b);
+      background: var(--green-d);
+      padding: 0.28rem 0.9rem;
+      border-radius: 99px;
+      margin-bottom: 2rem;
+      animation: rise 0.9s ease both;
+    }
+    .pulse {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.65)} }
 
-/* Placeholder content — centred inside the slot */
-.vslot-ph{
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  text-align:center;
-  padding:1rem;
-}
-.vslot-icon{font-size:1.3rem;margin-bottom:0.4rem;opacity:0.38;}
-.vslot-text{font-size:0.71rem;color:var(--sub);line-height:1.5;}
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 6.5vw, 5.8rem);
+      font-weight: 500;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.6rem;
+      animation: rise 0.9s 0.1s ease both;
+    }
+    .hero h1 em { font-style: italic; color: var(--green); }
 
-.vbadge{top:9px;left:9px;font-family:'JetBrains Mono',monospace;font-size:0.63rem;padding:0.18rem 0.52rem;border-radius:4px;font-weight:500;backdrop-filter:blur(6px);z-index:2;}
-.vb-en{background:rgba(0,0,0,0.6);color:rgba(255,255,255,0.82);}
-.vb-es{background:rgba(0,80,45,0.72);color:#7ee8c6;}
-.vb-pt{background:rgba(20,50,120,0.68);color:#93c5fd;}
-.vb-hi{background:rgba(100,50,0,0.68);color:#fb923c;}
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 580px;
+      margin: 0 auto 2.8rem;
+      line-height: 1.85;
+      font-weight: 400;
+      animation: rise 0.9s 0.2s ease both;
+    }
 
-.vcap{bottom:0;left:0;right:0;padding:0.5rem 0.75rem;background:linear-gradient(to top,rgba(0,0,0,0.82),transparent);font-size:0.7rem;color:rgba(255,255,255,0.9);z-index:2;}
-.vcap .tr{color:#7ee8c6;font-size:0.65rem;margin-top:2px;}
+    .hero-btns {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: rise 0.9s 0.3s ease both;
+    }
 
-.vplay{top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);font-size:13px;color:#fff;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:2;}
-.vslot.live:hover .vplay{opacity:1;}
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-/* Responsive: stack on mobile, keep slots compact */
-@media(max-width:600px){
-  .vslot{max-height:200px;}
-  .vslot video,.vslot iframe{max-height:200px;}
-}
+    /* ============================================================
+       PROOF BAR
+    ============================================================ */
+    .proof-bar {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--dark);
+    }
 
-.add-tip{background:rgba(0,224,154,0.04);border:1px solid var(--aborder);border-radius:var(--r);padding:0.9rem 1.1rem;margin-top:0.9rem;font-size:0.77rem;color:var(--sub);line-height:1.65;}
-.add-tip code{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);background:rgba(0,224,154,0.08);padding:0.08rem 0.35rem;border-radius:3px;}
+    .proof-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 3.5rem;
+      border-right: 1px solid var(--border);
+    }
+    .proof-item:last-child { border-right: none; }
 
-/* ─── SERVICES ─── */
-.sv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rxl);overflow:hidden;margin-top:2.5rem;}
-.sv-card{background:var(--card);padding:2rem;transition:background 0.18s;position:relative;}
-.sv-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--accent),var(--blue));transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
-.sv-card:hover{background:#1a1a22;}
-.sv-card:hover::after{transform:scaleX(1);}
-.sv-icon{font-size:1.55rem;margin-bottom:0.9rem;}
-.sv-card h3{font-size:0.92rem;font-weight:600;margin-bottom:0.45rem;}
-.sv-card p{font-size:0.81rem;color:var(--sub);line-height:1.65;}
+    .proof-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.3rem;
+      font-weight: 500;
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .proof-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-/* ─── LANGS ─── */
-.langs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:0.8rem;margin-top:2.5rem;}
-.lang-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;display:flex;align-items:center;gap:0.85rem;transition:border-color 0.18s;}
-.lang-card:hover{border-color:var(--border-h);}
-.l-flag{font-size:1.75rem;line-height:1;}
-.l-name{font-size:0.88rem;font-weight:500;}
-.l-var{font-size:0.7rem;color:var(--sub);margin-top:1px;font-family:'JetBrains Mono',monospace;}
+    /* ============================================================
+       TICKER
+    ============================================================ */
+    .ticker {
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 0;
+    }
+    .ticker-inner {
+      display: flex;
+      width: max-content;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0 2rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .ticker-dot { color: var(--faint); }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-/* ─── PROCESS ─── */
-.proc-row{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:2.5rem;position:relative;}
-.proc-row::before{content:'';position:absolute;top:19px;left:calc(8.33% + 8px);right:calc(8.33% + 8px);height:1px;background:linear-gradient(90deg,var(--accent),var(--blue),transparent);}
-.p-step{text-align:center;padding:0 0.4rem;}
-.p-num{width:38px;height:38px;border-radius:50%;margin:0 auto 0.85rem;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--sub);position:relative;z-index:1;transition:border-color 0.2s,color 0.2s;}
-.p-step.go .p-num{border-color:var(--accent);color:var(--accent);background:var(--adim);}
-.p-step h4{font-size:0.8rem;font-weight:600;margin-bottom:0.28rem;}
-.p-step p{font-size:0.72rem;color:var(--sub);line-height:1.55;}
+    /* ============================================================
+       SECTIONS
+    ============================================================ */
+    .section { padding: 6rem 3rem; max-width: 1100px; margin: 0 auto; }
+    .section-wide { background: var(--dark); }
+    .section-wide .section-inner { max-width: 1100px; margin: 0 auto; padding: 6rem 3rem; }
+    .divider { border: none; border-top: 1px solid var(--border); }
 
-/* ─── TESTIMONIALS ─── */
-.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:2.5rem;}
-.testi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;transition:border-color 0.2s;}
-.testi-card:hover{border-color:var(--border-h);}
-.stars{font-size:0.76rem;color:#F59E0B;margin-bottom:0.75rem;letter-spacing:0.1em;}
-.testi-q{font-family:'Instrument Serif',serif;font-size:0.97rem;line-height:1.68;color:var(--text);margin-bottom:1rem;font-style:italic;}
-.testi-auth{display:flex;align-items:center;gap:0.65rem;}
-.testi-av{width:33px;height:33px;border-radius:50%;background:rgba(0,224,154,0.12);border:1px solid var(--aborder);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:600;color:var(--accent);}
-.testi-name{font-size:0.81rem;font-weight:500;}
-.testi-role{font-size:0.7rem;color:var(--sub);}
-.testi-stat{margin-top:0.75rem;padding:0.55rem 0.75rem;background:var(--card2);border-radius:6px;font-size:0.73rem;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+    .eyebrow {
+      display: block;
+      font-size: 0.67rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.75rem;
+    }
+    .heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.9rem, 3vw, 2.9rem);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.9rem;
+    }
+    .heading em { font-style: italic; }
+    .subtext {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.82;
+      max-width: 500px;
+      font-weight: 400;
+    }
+    .section-head { margin-bottom: 3rem; }
 
-/* ─── WHY ME ─── */
-.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.8rem;margin-top:2.5rem;}
-.why-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.15rem;transition:border-color 0.2s;}
-.why-card:hover{border-color:var(--aborder);}
-.why-icon{font-size:1.15rem;margin-bottom:0.55rem;}
-.why-card h4{font-size:0.83rem;font-weight:600;margin-bottom:0.3rem;}
-.why-card p{font-size:0.77rem;color:var(--sub);line-height:1.6;}
+    /* ============================================================
+       PORTFOLIO / VIDEO SAMPLES
+    ============================================================ */
+    .tabs {
+      display: flex;
+      gap: 0.3rem;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+    .tab {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 500;
+      padding: 0.38rem 0.9rem;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab.active {
+      border-color: var(--green-b);
+      color: var(--green);
+      background: var(--green-d);
+    }
 
-/* ─── URGENCY ─── */
-.urgency-bar{background:linear-gradient(90deg,rgba(0,224,154,0.07),rgba(59,130,246,0.05));border:1px solid var(--aborder);border-radius:var(--r);padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:2rem;}
-.urgency-text{font-size:0.84rem;}
-.urgency-text strong{color:var(--accent);}
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-/* ─── PRICING ─── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.5rem;}
-.plan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:1.8rem 1.5rem;position:relative;transition:transform 0.18s;}
-.plan-card:hover{transform:translateY(-3px);}
-.plan-card.pop{border-color:var(--accent);background:linear-gradient(160deg,rgba(0,224,154,0.055),var(--card));}
-.pop-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:0.63rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.2rem 0.75rem;border-radius:99px;}
-.plan-name{font-size:0.7rem;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.65rem;}
-.plan-price{font-family:'Instrument Serif',serif;font-size:2.2rem;line-height:1;margin-bottom:0.3rem;}
-.plan-note{font-size:0.77rem;color:var(--sub);margin-bottom:1.4rem;padding-bottom:1.4rem;border-bottom:1px solid var(--border);}
-.plan-feats{list-style:none;display:flex;flex-direction:column;gap:0.55rem;margin-bottom:1.4rem;}
-.plan-feats li{font-size:0.8rem;color:var(--sub);display:flex;align-items:flex-start;gap:0.45rem;}
-.plan-feats li::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0;}
-.plan-btn{display:block;text-align:center;padding:0.72rem;border-radius:7px;font-size:0.81rem;font-weight:600;text-decoration:none;transition:all 0.18s;font-family:'DM Sans',sans-serif;}
-.pb-ghost{border:1px solid var(--border);color:var(--text);}
-.pb-ghost:hover{border-color:var(--accent);color:var(--accent);}
-.pb-solid{background:var(--accent);color:#000;}
-.pb-solid:hover{background:#00ffb3;}
+    .sample-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .sample-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .sample-meta { font-size: 0.79rem; color: var(--muted); }
+    .sample-meta strong { color: var(--text); }
+    .tag-row { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .tag {
+      font-size: 0.64rem;
+      padding: 0.14rem 0.52rem;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .tag-green { border-color: var(--green-b); color: var(--green); background: var(--green-d); }
 
-/* ─── CONTACT SECTION ─── */
-.contact-sec{padding:0 3rem 7rem;max-width:1100px;margin:0 auto;}
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2.5rem;}
-.contact-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:2rem;transition:border-color 0.2s,transform 0.2s;position:relative;overflow:hidden;}
-.contact-card:hover{border-color:var(--border-h);transform:translateY(-2px);}
-.contact-card.primary{border-color:var(--aborder);background:linear-gradient(140deg,rgba(0,224,154,0.06),var(--card));}
-.contact-card.primary:hover{border-color:rgba(0,224,154,0.4);}
-.cc-platform{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.1rem;}
-.cc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
-.cc-icon.wa{background:rgba(37,211,102,0.13);}
-.cc-icon.tg{background:rgba(34,158,217,0.13);}
-.cc-icon.ig{background:rgba(228,64,95,0.13);}
-.cc-icon.em{background:rgba(251,191,36,0.11);}
-.cc-name{font-size:0.95rem;font-weight:600;}
-.cc-handle{font-size:0.75rem;color:var(--sub);font-family:'JetBrains Mono',monospace;}
-.cc-message-preview{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:0.9rem 1rem;margin-bottom:1.2rem;font-size:0.78rem;color:var(--sub);line-height:1.6;font-style:italic;position:relative;}
-.cc-message-preview::before{content:'Pre-filled message:';display:block;font-style:normal;font-size:0.64rem;font-weight:600;color:var(--accent);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:0.4rem;}
-.cc-message-preview .msg-text{color:rgba(237,237,240,0.75);}
-.cc-btn{display:flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;padding:0.8rem;border-radius:8px;font-size:0.84rem;font-weight:600;text-decoration:none;transition:all 0.18s;font-family:'DM Sans',sans-serif;}
-.cc-btn.wa-btn{background:#25D366;color:#fff;}
-.cc-btn.wa-btn:hover{background:#20bd5a;transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,211,102,0.25);}
-.cc-btn.tg-btn{background:#229ED9;color:#fff;}
-.cc-btn.tg-btn:hover{background:#1a8bbf;transform:translateY(-1px);}
-.cc-btn.ig-btn{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;}
-.cc-btn.ig-btn:hover{opacity:0.9;transform:translateY(-1px);}
-.cc-btn.em-btn{background:rgba(251,191,36,0.12);color:#FBBF24;border:1px solid rgba(251,191,36,0.25);}
-.cc-btn.em-btn:hover{background:rgba(251,191,36,0.2);transform:translateY(-1px);}
-.response-tag{position:absolute;top:14px;right:14px;font-size:0.63rem;font-weight:600;color:var(--accent);background:var(--adim);border:1px solid var(--aborder);padding:0.18rem 0.6rem;border-radius:99px;}
+    .sample-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .sample-col { padding: 1.2rem; }
+    .sample-col:first-child { border-right: 1px solid var(--border); }
 
-/* CTA BOX */
-.cta-box-wrap{padding:4rem 3rem 6rem;max-width:1100px;margin:0 auto;}
-.cta-box{background:linear-gradient(135deg,rgba(0,224,154,0.07),rgba(59,130,246,0.05));border:1px solid var(--aborder);border-radius:var(--rxl);padding:5rem 3rem;text-align:center;position:relative;overflow:hidden;}
-.cta-box::before{content:'🌍';position:absolute;font-size:18rem;opacity:0.033;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
-.cta-heading{font-family:'Instrument Serif',serif;font-size:clamp(2rem,4vw,3rem);font-weight:400;letter-spacing:-0.02em;line-height:1.15;margin-bottom:1rem;position:relative;}
-.cta-heading .it{font-style:italic;color:var(--accent);}
-.cta-sub{color:var(--sub);max-width:480px;margin:0 auto 2.2rem;line-height:1.72;position:relative;font-size:0.93rem;}
-.cta-btns{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;position:relative;}
-.cta-small{font-size:0.72rem;color:var(--sub);margin-top:1rem;position:relative;}
-.cta-small a{color:var(--accent);text-decoration:none;}
+    .col-label {
+      font-size: 0.64rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .lang-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      padding: 0.08rem 0.42rem;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+    .lang-chip.es { background: rgba(0,229,160,0.12); color: var(--green); }
+    .lang-chip.pt { background: rgba(79,142,247,0.12); color: #93c5fd; }
+    .lang-chip.hi { background: rgba(251,146,60,0.12); color: #fb923c; }
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);padding:1.8rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
-.foot-logo{font-family:'Instrument Serif',serif;font-size:1.1rem;color:var(--text);text-decoration:none;}
-.foot-logo em{font-style:italic;color:var(--accent);}
-.foot-links{display:flex;gap:1.5rem;list-style:none;}
-.foot-links a{color:var(--sub);text-decoration:none;font-size:0.78rem;transition:color 0.15s;}
-.foot-links a:hover{color:var(--text);}
-footer p{color:var(--sub);font-size:0.73rem;}
+    /* Video slot — responsive 16:9 container */
+    .video-slot {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;  /* 16:9 */
+      background: var(--card2);
+      border: 1px dashed var(--faint);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      max-height: 300px;
+    }
+    .video-slot video,
+    .video-slot iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border: none;
+    }
+    .video-slot.has-media { border-style: solid; border-color: var(--border); background: #000; }
 
-/* ─── RISK REVERSAL ─── */
-.rr-bar{background:rgba(0,224,154,0.04);border:1px solid var(--aborder);border-radius:var(--r);padding:1rem 1.3rem;margin-top:1.4rem;font-size:0.8rem;color:var(--sub);line-height:1.65;display:flex;align-items:flex-start;gap:0.6rem;}
-.rr-bar a{color:var(--accent);font-weight:500;text-decoration:none;}
-.rr-bar a:hover{text-decoration:underline;}
+    /* Placeholder inside empty video slot */
+    .video-ph {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1rem;
+      pointer-events: none;
+    }
+    .video-ph-icon { font-size: 1.4rem; opacity: 0.35; margin-bottom: 0.4rem; }
+    .video-ph-text { font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
 
-/* ─── BLOG ─── */
-.blog-hero{padding:8.5rem 3rem 3.5rem;background:linear-gradient(160deg,#0b0c12,#0e1020 55%,#0b1620);border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
-.blog-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(0,224,154,0.07) 0%,transparent 70%);pointer-events:none;}
-.blog-ey{font-size:0.67rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--aborder);background:var(--adim);padding:0.22rem 0.75rem;border-radius:99px;display:inline-block;margin-bottom:0.85rem;}
-.blog-h1{font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:400;letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.65rem;}
-.blog-h1 span{font-style:italic;color:var(--accent);}
-.blog-sub{color:var(--sub);font-size:0.9rem;max-width:520px;line-height:1.72;}
-.blog-nav{display:flex;gap:0.2rem;padding:0 3rem;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;position:sticky;top:60px;z-index:90;}
-.b-tab{background:none;border:none;color:var(--sub);font-family:'DM Sans',sans-serif;font-size:0.79rem;font-weight:400;padding:0.78rem 1rem;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.15s;}
-.b-tab:hover{color:var(--text);}
-.b-tab.on{color:var(--accent);border-bottom-color:var(--accent);}
-.blog-body{max-width:1050px;margin:0 auto;padding:2rem 3rem;}
-.b-panel{display:none;}.b-panel.on{display:block;}
+    /* ============================================================
+       SERVICES GRID
+    ============================================================ */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-top: 2.5rem;
+    }
+    .service-card {
+      background: var(--card);
+      padding: 2rem;
+      position: relative;
+      transition: background 0.18s;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .service-card:hover { background: #18181f; }
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-icon { font-size: 1.5rem; margin-bottom: 0.9rem; }
+    .service-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.45rem; }
+    .service-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.68; font-weight: 400; }
 
-.b-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:0.75rem;margin-bottom:2rem;}
-.bs{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;text-align:center;}
-.bs-n{font-family:'Instrument Serif',serif;font-size:1.75rem;color:var(--accent);}
-.bs-l{font-size:0.68rem;color:var(--sub);margin-top:2px;text-transform:uppercase;letter-spacing:0.06em;}
-.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:2rem;}
-.scc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:0.95rem;}
-.scc strong{color:var(--accent);font-size:0.8rem;display:block;margin-bottom:0.3rem;}
-.scc span{font-size:0.76rem;color:var(--sub);line-height:1.6;}
-.btitle{font-family:'Instrument Serif',serif;font-size:1rem;font-weight:400;margin-bottom:0.9rem;display:flex;align-items:center;gap:0.65rem;}
-.btitle::after{content:'';flex:1;height:1px;background:var(--border);}
-.tbl-wrap{overflow-x:auto;}
-.atbl{width:100%;border-collapse:collapse;font-size:0.78rem;}
-.atbl thead tr{background:var(--card2);}
-.atbl th{text-align:left;padding:0.65rem 0.75rem;color:var(--sub);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--border);font-weight:500;}
-.atbl td{padding:0.7rem 0.75rem;border-bottom:1px solid var(--border);vertical-align:top;}
-.atbl tr.pk td{background:rgba(0,224,154,0.025);}
-.atbl tr:hover td{background:rgba(255,255,255,0.015);}
-.tt{font-weight:500;color:var(--text);font-size:0.8rem;margin-bottom:1px;}
-.ti{font-size:0.7rem;color:var(--sub);}
-.pill{display:inline-block;font-size:0.63rem;font-weight:500;padding:1.5px 6px;border-radius:99px;white-space:nowrap;}
-.pt{background:rgba(0,224,154,0.1);color:var(--accent);}
-.pi{background:rgba(124,77,255,0.1);color:#b39ddb;}
-.plo{background:rgba(0,200,80,0.1);color:#4ade80;}
-.pme{background:rgba(251,146,60,0.1);color:#fb923c;}
-.phi{background:rgba(239,68,68,0.1);color:#f87171;}
-.ppk{background:rgba(0,224,154,0.18);color:var(--accent);border:1px solid rgba(0,224,154,0.35);}
-.sd{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;font-weight:600;font-size:0.7rem;}
-.sh{background:rgba(0,200,80,0.15);color:#4ade80;border:1px solid rgba(0,200,80,0.3);}
-.sm{background:rgba(251,146,60,0.12);color:#fb923c;border:1px solid rgba(251,146,60,0.28);}
-.sl{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.28);}
-.wpbox{background:var(--card);border:1px solid rgba(0,224,154,0.18);border-radius:var(--r);padding:1.1rem 1.3rem;margin-top:1.1rem;font-size:0.81rem;color:var(--sub);line-height:1.75;}
-.wpbox strong{color:var(--text);}
+    /* ============================================================
+       LANGUAGES
+    ============================================================ */
+    .langs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.8rem;
+      margin-top: 2.5rem;
+    }
+    .lang-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 1rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      transition: border-color 0.18s;
+    }
+    .lang-card:hover { border-color: var(--border-h); }
+    .lang-card.accent { border-color: var(--green-b); }
+    .flag { font-size: 1.7rem; line-height: 1; }
+    .lang-name { font-size: 0.86rem; font-weight: 600; }
+    .lang-regions {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
-.art-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1.8rem;}
-.art-head{padding:1.1rem 1.4rem 0.9rem;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:0.7rem;align-items:flex-start;justify-content:space-between;}
-.art-num{font-size:0.63rem;color:var(--sub);font-weight:500;letter-spacing:0.09em;text-transform:uppercase;margin-bottom:0.3rem;font-family:'JetBrains Mono',monospace;}
-.art-title{font-family:'Instrument Serif',serif;font-size:1.03rem;font-weight:400;margin-bottom:0.45rem;letter-spacing:-0.01em;}
-.art-pills{display:flex;flex-wrap:wrap;gap:0.3rem;}
-.art-kw{background:var(--card2);padding:0.7rem 1.4rem;}
-.kl{font-size:0.63rem;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.38rem;}
-.kt{display:flex;flex-wrap:wrap;gap:0.3rem;}
-.kw{background:rgba(124,77,255,0.1);color:#b39ddb;border:1px solid rgba(124,77,255,0.18);border-radius:4px;font-size:0.68rem;padding:2px 7px;}
-.art-body{padding:1.4rem;font-size:0.86rem;line-height:1.8;color:#c8cad8;}
-.art-body h2{font-family:'Instrument Serif',serif;font-size:0.98rem;font-weight:400;color:var(--text);margin:1.4rem 0 0.45rem;padding-bottom:0.38rem;border-bottom:1px solid var(--border);}
-.art-body h3{font-size:0.81rem;font-weight:600;color:var(--accent);margin:1.1rem 0 0.32rem;}
-.art-body p{margin-bottom:0.75rem;}
-.art-body ul{margin:0 0 0.75rem 1rem;}
-.art-body li{margin-bottom:0.22rem;}
-.acta{background:linear-gradient(90deg,rgba(0,224,154,0.07),rgba(59,130,246,0.05));border:1px solid rgba(0,224,154,0.18);border-radius:7px;padding:0.95rem 1.1rem;margin-top:0.9rem;font-size:0.81rem;}
-.acta strong{color:var(--accent);}
-.acta a{color:var(--accent);text-decoration:none;font-weight:500;}
-.acta a:hover{text-decoration:underline;}
+    /* ============================================================
+       PROCESS
+    ============================================================ */
+    .process-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
+      margin-top: 2.5rem;
+      position: relative;
+    }
+    .process-row::before {
+      content: '';
+      position: absolute;
+      top: 19px;
+      left: calc(8.33% + 10px);
+      right: calc(8.33% + 10px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--green), var(--blue), transparent);
+    }
+    .step { text-align: center; padding: 0 0.4rem; }
+    .step-num {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      margin: 0 auto 0.85rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.73rem;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .step.highlight .step-num { border-color: var(--green); color: var(--green); background: var(--green-d); }
+    .step h4 { font-size: 0.78rem; font-weight: 600; margin-bottom: 0.28rem; }
+    .step p { font-size: 0.7rem; color: var(--muted); line-height: 1.55; font-weight: 400; }
 
-/* FI ANIMATIONS */
-.fi{opacity:0;transform:translateY(18px);transition:opacity 0.62s ease,transform 0.62s ease;}
-.fi.vis{opacity:1;transform:translateY(0);}
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    .testi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 1.6rem;
+      transition: border-color 0.2s;
+    }
+    .testi-card:hover { border-color: var(--border-h); }
+    .stars { font-size: 0.75rem; color: #F59E0B; letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+    .testi-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      line-height: 1.72;
+      color: var(--text);
+      margin-bottom: 1.1rem;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .testi-author { display: flex; align-items: center; gap: 0.65rem; }
+    .testi-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--green-d);
+      border: 1px solid var(--green-b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .testi-name { font-size: 0.8rem; font-weight: 600; }
+    .testi-role { font-size: 0.69rem; color: var(--muted); margin-top: 1px; }
+    .testi-result {
+      margin-top: 0.8rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--card2);
+      border-radius: var(--r-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.71rem;
+      color: var(--green);
+    }
 
-/* MOBILE */
-@media(max-width:800px){
-  nav{padding:0 1.2rem;}.nav-links{display:none;}
-  .sec,.sec-inner,.blog-body,.blog-hero,.contact-sec,.cta-box-wrap{padding-left:1.2rem;padding-right:1.2rem;}
-  .hero-wrap{padding:6rem 1.2rem 4rem;}
-  .sample-grid{grid-template-columns:1fr;}.sample-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
-  .proc-row{grid-template-columns:repeat(3,1fr);}
-  .pricing-grid{grid-template-columns:1fr;}
-  .contact-grid{grid-template-columns:1fr;}
-  .proof-item{min-width:50%;border-bottom:1px solid var(--border);}
-  footer{flex-direction:column;text-align:center;}
-  .sc-grid{grid-template-columns:1fr;}
-  .blog-nav{padding:0 1rem;}
-}
-</style>
+    /* ============================================================
+       WHY XCELLVOXLAPS
+    ============================================================ */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+      gap: 0.8rem;
+      margin-top: 2.5rem;
+    }
+    .why-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 1.2rem;
+      transition: border-color 0.2s;
+    }
+    .why-card:hover { border-color: var(--green-b); }
+    .why-icon { font-size: 1.1rem; margin-bottom: 0.55rem; }
+    .why-card h4 { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .why-card p { font-size: 0.76rem; color: var(--muted); line-height: 1.62; font-weight: 400; }
+
+    /* Urgency strip */
+    .urgency {
+      background: linear-gradient(90deg, rgba(0,229,160,0.07), rgba(79,142,247,0.05));
+      border: 1px solid var(--green-b);
+      border-radius: var(--r-sm);
+      padding: 1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .urgency p { font-size: 0.83rem; }
+    .urgency strong { color: var(--green); }
+
+    /* ============================================================
+       PRICING
+    ============================================================ */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    .plan {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 1.9rem 1.6rem;
+      position: relative;
+      transition: transform 0.18s;
+    }
+    .plan:hover { transform: translateY(-3px); }
+    .plan.featured {
+      border-color: var(--green);
+      background: linear-gradient(160deg, rgba(0,229,160,0.055), var(--card));
+    }
+    .plan-badge {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green);
+      color: #000;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.18rem 0.75rem;
+      border-radius: 99px;
+    }
+    .plan-tier { font-size: 0.68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.65rem; }
+    .plan-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.3rem;
+      font-weight: 500;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .plan-note { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--border); line-height: 1.6; font-weight: 400; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.5rem; }
+    .plan-features li { font-size: 0.79rem; color: var(--muted); display: flex; align-items: flex-start; gap: 0.4rem; font-weight: 400; }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .plan-btn {
+      display: block;
+      text-align: center;
+      padding: 0.72rem;
+      border-radius: var(--r-sm);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.18s;
+    }
+    .plan-btn-outline { border: 1px solid var(--border); color: var(--text); }
+    .plan-btn-outline:hover { border-color: var(--green); color: var(--green); }
+    .plan-btn-solid { background: var(--green); color: #000; }
+    .plan-btn-solid:hover { background: #00ffb5; }
+
+    /* Risk-reversal bar */
+    .rr-bar {
+      background: rgba(0,229,160,0.04);
+      border: 1px solid var(--green-b);
+      border-radius: var(--r-sm);
+      padding: 1rem 1.3rem;
+      margin-top: 1.5rem;
+      font-size: 0.79rem;
+      color: var(--muted);
+      line-height: 1.68;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      font-weight: 400;
+    }
+    .rr-bar a { color: var(--green); font-weight: 600; text-decoration: none; }
+    .rr-bar a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+    }
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 2rem;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .contact-card:hover { border-color: var(--border-h); transform: translateY(-2px); }
+    .contact-card.primary { border-color: var(--green-b); background: linear-gradient(140deg, rgba(0,229,160,0.05), var(--card)); }
+    .contact-card.primary:hover { border-color: rgba(0,229,160,0.38); }
+
+    .response-tag {
+      position: absolute;
+      top: 14px; right: 14px;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-d);
+      border: 1px solid var(--green-b);
+      padding: 0.16rem 0.55rem;
+      border-radius: 99px;
+    }
+    .cc-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.1rem; }
+    .cc-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+    }
+    .cc-icon-wa { background: rgba(37,211,102,0.12); }
+    .cc-icon-tg { background: rgba(34,158,217,0.12); }
+    .cc-icon-ig { background: rgba(228,64,95,0.12); }
+    .cc-name { font-size: 0.93rem; font-weight: 600; }
+    .cc-handle { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--muted); }
+
+    .cc-preview {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.77rem;
+      color: rgba(232,232,237,0.72);
+      line-height: 1.65;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .cc-preview-label {
+      display: block;
+      font-style: normal;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .cc-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      width: 100%;
+      padding: 0.78rem;
+      border-radius: var(--r-sm);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.18s;
+    }
+    .cc-wa { background: #25D366; color: #fff; }
+    .cc-wa:hover { background: #1dbf57; transform: translateY(-1px); box-shadow: 0 8px 22px rgba(37,211,102,0.22); }
+    .cc-tg { background: #229ED9; color: #fff; }
+    .cc-tg:hover { background: #1a88bd; transform: translateY(-1px); }
+    .cc-ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
+    .cc-ig:hover { opacity: 0.9; transform: translateY(-1px); }
+    .cc-note { font-size: 0.68rem; color: var(--muted); text-align: center; margin-top: 0.55rem; font-weight: 400; }
+
+    /* ============================================================
+       CTA SECTION
+    ============================================================ */
+    .cta-wrap { padding: 4rem 3rem 6rem; max-width: 1100px; margin: 0 auto; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(0,229,160,0.07), rgba(79,142,247,0.05));
+      border: 1px solid var(--green-b);
+      border-radius: var(--r-lg);
+      padding: 5rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '🌍';
+      position: absolute;
+      font-size: 16rem;
+      opacity: 0.035;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .cta-box h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .cta-box h2 em { font-style: italic; color: var(--green); }
+    .cta-box p { color: var(--muted); max-width: 460px; margin: 0 auto 2.2rem; line-height: 1.78; font-size: 0.92rem; position: relative; font-weight: 400; }
+    .cta-btns { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; position: relative; }
+    .cta-fine { font-size: 0.71rem; color: var(--muted); margin-top: 1rem; position: relative; font-weight: 400; }
+    .cta-fine a { color: var(--green); text-decoration: none; }
+
+    /* ============================================================
+       BLOG / RESOURCES PAGE
+    ============================================================ */
+    .blog-hero {
+      padding: 9rem 3rem 4rem;
+      background: linear-gradient(160deg, #09090F, #0C0E1E 55%, #090E1A);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .blog-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 340px; height: 340px;
+      background: radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .blog-eyebrow {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green-b);
+      background: var(--green-d);
+      padding: 0.22rem 0.78rem;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+    .blog-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      margin-bottom: 0.7rem;
+    }
+    .blog-hero h1 em { font-style: italic; color: var(--green); }
+    .blog-hero p { color: var(--muted); font-size: 0.9rem; max-width: 500px; line-height: 1.75; font-weight: 400; }
+
+    .blog-nav {
+      display: flex;
+      gap: 0.15rem;
+      padding: 0 3rem;
+      background: var(--dark);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      position: sticky;
+      top: 62px;
+      z-index: 90;
+    }
+    .blog-tab {
+      background: none;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 0.8rem 1rem;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .blog-tab:hover { color: var(--text); }
+    .blog-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+    .blog-body { max-width: 1050px; margin: 0 auto; padding: 2.5rem 3rem; }
+    .blog-panel { display: none; }
+    .blog-panel.active { display: block; }
+
+    /* Stats row */
+    .blog-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2.2rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 1.1rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.85rem;
+      color: var(--green);
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.67rem; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+    /* Scoring criteria */
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .criteria-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 1rem;
+    }
+    .criteria-card strong { color: var(--green); font-size: 0.79rem; display: block; margin-bottom: 0.3rem; }
+    .criteria-card span { font-size: 0.75rem; color: var(--muted); line-height: 1.62; font-weight: 400; }
+
+    /* Section title with line */
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* Topics table */
+    .tbl-wrap { overflow-x: auto; }
+    .topics-table { width: 100%; border-collapse: collapse; font-size: 0.77rem; }
+    .topics-table thead tr { background: var(--card2); }
+    .topics-table th {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      color: var(--muted);
+      font-size: 0.63rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .topics-table td { padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .topics-table tr.pick td { background: rgba(0,229,160,0.025); }
+    .topics-table tr:hover td { background: rgba(255,255,255,0.015); }
+    .topic-title { font-weight: 600; color: var(--text); font-size: 0.79rem; margin-bottom: 1px; }
+    .topic-sub { font-size: 0.69rem; color: var(--muted); }
+
+    /* Pills */
+    .pill {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 500;
+      padding: 1.5px 6px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .pill-trans { background: rgba(0,229,160,0.1); color: var(--green); }
+    .pill-info { background: rgba(124,77,255,0.1); color: #b39ddb; }
+    .pill-low { background: rgba(0,200,80,0.1); color: #4ade80; }
+    .pill-med { background: rgba(251,146,60,0.1); color: #fb923c; }
+    .pill-high { background: rgba(239,68,68,0.1); color: #f87171; }
+    .pill-pick { background: rgba(0,229,160,0.18); color: var(--green); border: 1px solid rgba(0,229,160,0.35); }
+
+    .score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px; height: 25px;
+      border-radius: 50%;
+      font-weight: 600;
+      font-size: 0.69rem;
+    }
+    .score-high { background: rgba(0,200,80,0.15); color: #4ade80; border: 1px solid rgba(0,200,80,0.3); }
+    .score-mid  { background: rgba(251,146,60,0.12); color: #fb923c; border: 1px solid rgba(251,146,60,0.28); }
+
+    .framework-note {
+      background: var(--card);
+      border: 1px solid rgba(0,229,160,0.18);
+      border-radius: var(--r-sm);
+      padding: 1.1rem 1.3rem;
+      margin-top: 1.2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.78;
+      font-weight: 400;
+    }
+    .framework-note strong { color: var(--text); }
+
+    /* Article cards */
+    .article-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-bottom: 1.8rem;
+    }
+    .article-head {
+      padding: 1.1rem 1.5rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .article-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+    .article-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+    .article-keywords {
+      background: var(--card2);
+      padding: 0.75rem 1.5rem;
+    }
+    .kw-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-bottom: 0.4rem;
+    }
+    .kw-list { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .kw {
+      background: rgba(124,77,255,0.1);
+      color: #b39ddb;
+      border: 1px solid rgba(124,77,255,0.18);
+      border-radius: 4px;
+      font-size: 0.67rem;
+      padding: 2px 7px;
+    }
+    .article-body {
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      line-height: 1.82;
+      color: #c5c8d8;
+      font-weight: 400;
+    }
+    .article-body h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      margin: 1.5rem 0 0.5rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .article-body h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--green);
+      margin: 1.1rem 0 0.35rem;
+    }
+    .article-body p { margin-bottom: 0.75rem; }
+    .article-body ul { margin: 0 0 0.75rem 1rem; }
+    .article-body li { margin-bottom: 0.22rem; }
+
+    .article-cta {
+      background: linear-gradient(90deg, rgba(0,229,160,0.07), rgba(79,142,247,0.05));
+      border: 1px solid rgba(0,229,160,0.18);
+      border-radius: var(--r-sm);
+      padding: 0.95rem 1.1rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+    }
+    .article-cta strong { color: var(--green); }
+    .article-cta a { color: var(--green); text-decoration: none; font-weight: 600; }
+    .article-cta a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .foot-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .foot-logo em { font-style: italic; color: var(--green); }
+    .foot-links { display: flex; gap: 1.5rem; list-style: none; }
+    .foot-links a { color: var(--muted); text-decoration: none; font-size: 0.77rem; transition: color 0.15s; font-weight: 400; }
+    .foot-links a:hover { color: var(--text); }
+    footer p { color: var(--muted); font-size: 0.72rem; font-weight: 400; }
+
+    /* ============================================================
+       SCROLL ANIMATIONS
+    ============================================================ */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.62s ease, transform 0.62s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 800px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links { display: none; }
+      .hero, .section, .cta-wrap, .blog-hero, .blog-body { padding-left: 1.2rem; padding-right: 1.2rem; }
+      .section-wide .section-inner { padding-left: 1.2rem; padding-right: 1.2rem; }
+      .sample-cols { grid-template-columns: 1fr; }
+      .sample-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+      .process-row { grid-template-columns: repeat(3, 1fr); }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .proof-item { min-width: 50%; border-bottom: 1px solid var(--border); }
+      footer { flex-direction: column; text-align: center; }
+      .criteria-grid { grid-template-columns: 1fr; }
+      .blog-nav { padding: 0 1rem; }
+      .video-slot { max-height: 180px; }
+      .video-slot video, .video-slot iframe { max-height: 180px; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ═══════ NAV ═══════ -->
-<nav>
-  <a class="logo" href="#" onclick="goPg('home')">XcellVox<em>Laps</em></a>
-  <div class="nav-links">
-    <a href="#" onclick="goPg('home');goTo('#services')">Services</a>
-    <a href="#" onclick="goPg('home');goTo('#portfolio')">Portfolio</a>
-    <a href="#" onclick="goPg('home');goTo('#pricing')">Pricing</a>
-    <a href="#" onclick="goPg('home');goTo('#contact')">Contact</a>
-    <a href="#" onclick="goPg('blog')">Resources</a>
-    <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%2C%20I%27d%20like%20to%20get%20started%20with%20video%20localization.%20Can%20you%20tell%20me%20more%20about%20your%20services%3F" class="nav-cta" target="_blank">Get Started</a>
-  </div>
-</nav>
-
-
-<!-- ═══════════════════════════════
-  HOME PAGE
-═══════════════════════════════ -->
-<div id="pg-home" class="pg on">
-
-<!-- HERO -->
-<div class="hero-wrap">
-  <div class="hero-bg"></div>
-  <div class="hero-inner">
-    <div class="hero-tag"><div class="dot-pulse"></div> Video Localization Specialist</div>
-    <h1 class="hero-h1">Your content,<br><span class="it">spoken by the world.</span></h1>
-    <p class="hero-desc">Turn your existing content into scalable, multi-market revenue streams — without creating anything new. Native voiceovers, expert translation, and fully managed publishing tailored to each market.</p>
-    <div class="hero-btns">
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20just%20came%20across%20your%20website%20and%20I%27m%20interested%20in%20localizing%20my%20videos.%20Can%20we%20talk%20about%20what%20you%20can%20do%20for%20my%20channel%2Fbusiness%3F" class="btn btn-green" target="_blank">💬 Let's Talk — WhatsApp</a>
-      <a href="#portfolio" class="btn btn-ghost" onclick="goTo('#portfolio')">▶ See Sample Work</a>
+  <!-- ============================================================
+    NAVIGATION
+  ============================================================ -->
+  <nav>
+    <a class="logo" href="#" onclick="showPage('home')">XcellVox<em>Laps</em></a>
+    <div class="nav-links">
+      <a href="#" onclick="showPage('home'); scrollTo('#services')">Services</a>
+      <a href="#" onclick="showPage('home'); scrollTo('#portfolio')">Portfolio</a>
+      <a href="#" onclick="showPage('home'); scrollTo('#pricing')">Pricing</a>
+      <a href="#" onclick="showPage('home'); scrollTo('#contact')">Contact</a>
+      <a href="#" onclick="showPage('blog')">Resources</a>
+      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%2C%20I%27d%20like%20to%20get%20started%20with%20video%20localization." class="nav-cta" target="_blank">Get Started</a>
     </div>
-  </div>
-</div>
-
-<!-- PROOF BAR -->
-<div class="proof-bar">
-  <div class="proof-item fi"><div class="proof-num">5+</div><div class="proof-label">Languages</div></div>
-  <div class="proof-item fi"><div class="proof-num">3B+</div><div class="proof-label">Viewers Unlocked</div></div>
-  <div class="proof-item fi"><div class="proof-num">48h</div><div class="proof-label">Avg. Turnaround</div></div>
-  <div class="proof-item fi"><div class="proof-num">3×</div><div class="proof-label">Avg. Audience Growth</div></div>
-  <div class="proof-item fi"><div class="proof-num">0</div><div class="proof-label">New Videos Required</div></div>
-</div>
-
-<!-- TICKER -->
-<div class="ticker-track">
-  <div class="ticker-inner">
-    <div class="ticker-item"><span>🇪🇸 Spanish</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇧🇷 Portuguese</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇮🇳 Hindi</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇸🇦 Arabic</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇫🇷 French</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🎙 Native Voiceovers</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>♻️ Content Repurposing</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>📈 Managed Publishing</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🌍 Zero New Production</span><span class="ticker-sep">·</span></div>
-    <!-- repeat -->
-    <div class="ticker-item"><span>🇪🇸 Spanish</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇧🇷 Portuguese</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇮🇳 Hindi</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇸🇦 Arabic</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🇫🇷 French</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🎙 Native Voiceovers</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>♻️ Content Repurposing</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>📈 Managed Publishing</span><span class="ticker-sep">·</span></div>
-    <div class="ticker-item"><span>🌍 Zero New Production</span><span class="ticker-sep">·</span></div>
-  </div>
-</div>
-
-<!-- ── PORTFOLIO ── -->
-<section id="portfolio" class="sec">
-  <div class="sec-top fi">
-    <span class="eyebrow">Sample Work — Before & After</span>
-    <h2 class="heading">Hear the difference <span class="it">for yourself.</span></h2>
-    <p class="sub-text">Real localized samples across different content types and languages. Each tab shows a before/after pair — add your own videos using the instructions below each sample.</p>
-  </div>
-
-  <div class="samples-tabs fi">
-    <button class="s-tab active" onclick="switchS(0,this)">Finance · EN→ES</button>
-    <button class="s-tab" onclick="switchS(1,this)">Tech Review · EN→PT</button>
-    <button class="s-tab" onclick="switchS(2,this)">Education · EN→HI</button>
-    <button class="s-tab" onclick="switchS(3,this)">+ Add Your Sample</button>
-  </div>
-
-  <!-- Sample 0 -->
-  <div class="s-panel active" id="sp0">
-    <div class="sample-box fi">
-      <div class="sample-header">
-        <div class="sample-meta"><strong>Finance explainer</strong> · English → Spanish · 4 min</div>
-        <div class="sample-badges">
-          <span class="sbadge g">✓ Lip-sync dubbing</span>
-          <span class="sbadge g">✓ Cultural adaptation</span>
-          <span class="sbadge">Native speaker reviewed</span>
-          <span class="sbadge">On-screen text translated</span>
-        </div>
-      </div>
-      <div class="sample-grid">
-        <div class="sample-col">
-          <div class="col-label">Original <span class="lchip">EN</span></div>
-          <!-- TO ADD YOUR VIDEO:
-               YouTube → <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> + add class="live" to .vslot
-               MP4    → <video src="your-video.mp4" controls></video> + add class="live" to .vslot
-               For now: clicking opens your Google Drive samples -->
-         <div class="vslot live">
-  <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778809513/Woman_doesn_t_mean_hang_your_destiny_on_a_man_DrPaulEnenche_Dunamis_Theglorydome_motivation_fc9yq8.mp4" controls playsinline></video>
-</div>
-            <div class="vslot-ph"><div class="vslot-icon">▶</div><div class="vslot-text">Original English video<br><span style="color:var(--accent);font-size:0.67rem;">Click to view on Drive</span></div></div>
-            <span class="vbadge vb-en">EN</span>
-            <div class="vcap">How compound interest works<div class="tr">"…your money grows exponentially over time."</div></div>
-          </a>
-        </div>
-        <div class="sample-col">
-          <div class="col-label">Localized <span class="lchip es">ES</span></div>
-          <div class="vslot live">
-  <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778810974/dr_pual-spanish_gqh4tt.mp4" controls playsinline></video>
-</div>
-            <div class="vslot-ph"><div class="vslot-icon">🎙</div><div class="vslot-text">Spanish dubbed version<br><span style="color:var(--accent);font-size:0.67rem;">Click to view on Drive</span></div></div>
-            <span class="vbadge vb-es">ES</span>
-            <div class="vcap">Cómo funciona el interés compuesto<div class="tr">"…así tu dinero crece exponencialmente."</div></div>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="add-tip fi">
-      📌 <strong style="color:var(--accent);">How to add your real videos (3 ways):</strong><br><br>
-      <strong style="color:var(--text);">① YouTube embed</strong> — Replace the <code>&lt;a class="vslot"&gt;...&lt;/a&gt;</code> with:<br>
-      <code>&lt;div class="vslot live"&gt;&lt;iframe src="https://www.youtube.com/embed/<span style="color:#fb923c;">VIDEO_ID</span>?rel=0" allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;</code><br><br>
-      <strong style="color:var(--text);">② MP4 file</strong> — Replace with:<br>
-      <code>&lt;div class="vslot live"&gt;&lt;video src="<span style="color:#fb923c;">your-file.mp4</span>" controls playsinline&gt;&lt;/video&gt;&lt;/div&gt;</code><br><br>
-      <strong style="color:var(--text);">③ Google Drive link</strong> — Keep the <code>&lt;a class="vslot" href="YOUR_DRIVE_LINK"&gt;</code> as-is — clicking opens the video in Drive. ✅ Already set up this way.
-    </div>
-  </div>
-
-  <!-- Sample 1 -->
-  <div class="s-panel" id="sp1">
-    <div class="sample-box fi">
-      <div class="sample-header">
-        <div class="sample-meta"><strong>Tech review video</strong> · English → Portuguese · 8 min</div>
-        <div class="sample-badges"><span class="sbadge g">✓ Voice cloning</span><span class="sbadge g">✓ Subtitle sync</span><span class="sbadge">YouTube-ready</span></div>
-      </div>
-      <div class="sample-grid">
-        <div class="sample-col">
-          <div class="col-label">Original <span class="lchip">EN</span></div>
-         <div class="vslot live">
-  <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778808977/5_iPhones_you_shouldn_t_swap-_engish_cvpapt.mp4" controls playsinline></video>
-</div>
-            <div class="vslot-ph"><div class="vslot-icon">▶</div><div class="vslot-text">Original English video<br><span style="color:var(--accent);font-size:0.67rem;">Click to view samples</span></div></div>
-            <span class="vbadge vb-en">EN</span>
-          </a>
-        </div>
-        <div class="sample-col">
-          <div class="col-label">Localized <span class="lchip pt">PT</span></div>
-          <div class="vslot live">
-  <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778810778/0404_lw3k5f.mp4" controls playsinline></video>
-</div>
-            <div class="vslot-ph"><div class="vslot-icon">🎙</div><div class="vslot-text">Portuguese dubbed version<br><span style="color:var(--accent);font-size:0.67rem;">Click to view on Drive</span></div></div>
-            <span class="vbadge vb-pt">PT</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sample 2 -->
-  <div class="s-panel" id="sp2">
-    <div class="sample-box fi">
-      <div class="sample-header">
-        <div class="sample-meta"><strong>Educational content</strong> · English → Hindi · 6 min</div>
-        <div class="sample-badges"><span class="sbadge g">✓ Cultural adaptation</span><span class="sbadge">High-retention format</span></div>
-      </div>
-      <div class="sample-grid">
-        <div class="sample-col">
-          <div class="col-label">Original <span class="lchip">EN</span></div>
-          <div class="vslot live">
-  <video src="your-video.mp4" controls playsinline></video>
-</div>
-            <div class="vslot-ph"><div class="vslot-icon">▶</div><div class="vslot-text">Original English video<br><span style="color:var(--accent);font-size:0.67rem;">View on Drive</span></div></div>
-            <span class="vbadge vb-en">EN</span>
-          </a>
-        </div>
-        <div class="sample-col">
-          <div class="col-label">Localized <span class="lchip hi">HI</span></div>
-          <div class="vslot live">
-  <video src="your-video.mp4" controls playsinline></video>
-</div>
-            <div class="vslot-ph"><div class="vslot-icon">🎙</div><div class="vslot-text">Hindi dubbed version<br><span style="color:var(--accent);font-size:0.67rem;">View on Drive</span></div></div>
-            <span class="vbadge vb-hi">HI</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sample 3 — blank template -->
-  <div class="s-panel" id="sp3">
-    <div class="sample-box fi">
-      <div class="sample-header">
-        <div class="sample-meta"><strong>Your next sample</strong> · Add your own before/after here</div>
-        <div class="sample-badges"><span class="sbadge g">Any language pair</span><span class="sbadge">Fully customizable</span></div>
-      </div>
-      <div class="sample-grid">
-        <div class="sample-col">
-          <div class="col-label">Your Original</div>
-          <div class="vslot" style="cursor:default;">
-            <div class="vslot-ph"><div class="vslot-icon">📹</div><div class="vslot-text" style="font-size:0.78rem;"><strong style="color:var(--text);">Paste your YouTube embed or MP4 here</strong></div></div>
-          </div>
-        </div>
-        <div class="sample-col">
-          <div class="col-label">Your Dubbed Version</div>
-          <div class="vslot" style="cursor:default;">
-            <div class="vslot-ph"><div class="vslot-icon">🌍</div><div class="vslot-text" style="font-size:0.78rem;"><strong style="color:var(--text);">Paste the dubbed version here</strong></div></div>
-          </div>
-        </div>
-      
-   </section>
-
-<hr class="div-line">
-
-<!-- SERVICES -->
-<section id="services" class="sec">
-  <div class="sec-top fi">
-    <span class="eyebrow">What I Do</span>
-    <h2 class="heading">Everything handled. <span class="it">Nothing left to you.</span></h2>
-    <p class="sub-text">From raw video to live, optimized content in a new language market — every step, end to end.</p>
-  </div>
-  <div class="sv-grid fi">
-    <div class="sv-card"><div class="sv-icon">🎙</div><h3>Native Voiceover Dubbing</h3><p>Real human voices from native speakers — not robotic, not generic. Your content sounds like it was made for that audience.</p></div>
-    <div class="sv-card"><div class="sv-icon">🌐</div><h3>Cultural Translation</h3><p>We adapt meaning, idioms, and tone — not just words. Your message lands the way you intended, in every language.</p></div>
-    <div class="sv-card"><div class="sv-icon">♻️</div><h3>Content Repurposing</h3><p>Your existing library transformed into localized multi-market assets. Zero new production required from your side.</p></div>
-    <div class="sv-card"><div class="sv-icon">🎬</div><h3>Video Dubbing & Lip Sync</h3><p>Dubbed audio synced to your video timeline — lips, cuts, and energy match naturally in every target language.</p></div>
-    <div class="sv-card"><div class="sv-icon">📤</div><h3>Managed Publishing</h3><p>Full platform upload with localized titles, descriptions, tags, and thumbnails — tailored to each market's algorithm.</p></div>
-    <div class="sv-card"><div class="sv-icon">📊</div><h3>SEO Localization</h3><p>Optimized for search in every target market. Your content gets found, watched, and compounds as a long-term traffic asset.</p></div>
-  </div>
-</section>
-
-<hr class="div-line">
-
-<!-- LANGUAGES -->
-<div class="sec-wide">
-<div class="sec-inner">
-  <div class="sec-top fi">
-    <span class="eyebrow">Markets I Unlock</span>
-    <h2 class="heading">5 languages. <span class="it">Billions of new viewers.</span></h2>
-    <p class="sub-text">Each language market is a separate, addressable audience hungry for content in their native tongue.</p>
-  </div>
-  <div class="langs-grid fi">
-    <div class="lang-card"><span class="l-flag">🇪🇸</span><div><div class="l-name">Spanish</div><div class="l-var">ES · MX · AR · CO</div></div></div>
-    <div class="lang-card"><span class="l-flag">🇧🇷</span><div><div class="l-name">Portuguese</div><div class="l-var">BR · PT</div></div></div>
-    <div class="lang-card"><span class="l-flag">🇮🇳</span><div><div class="l-name">Hindi</div><div class="l-var">IN</div></div></div>
-    <div class="lang-card"><span class="l-flag">🇸🇦</span><div><div class="l-name">Arabic</div><div class="l-var">SA · AE · EG</div></div></div>
-    <div class="lang-card"><span class="l-flag">🇫🇷</span><div><div class="l-name">French</div><div class="l-var">FR · CA · BE</div></div></div>
-    <div class="lang-card" style="border-color:var(--aborder)"><span class="l-flag">🌍</span><div><div class="l-name" style="color:var(--accent);">More on request</div><div class="l-var">Ask about your target</div></div></div>
-  </div>
-</div>
-</div>
-
-<!-- PROCESS -->
-<section class="sec">
-  <div class="sec-top fi">
-    <span class="eyebrow">My Process</span>
-    <h2 class="heading">Six steps. <span class="it">You send the video.</span> I handle the rest.</h2>
-  </div>
-  <div class="proc-row fi">
-    <div class="p-step go"><div class="p-num">01</div><h4>You send the video</h4><p>Any format, length, niche</p></div>
-    <div class="p-step"><div class="p-num">02</div><h4>Pick target markets</h4><p>Language + regional variant</p></div>
-    <div class="p-step"><div class="p-num">03</div><h4>Transcribe & translate</h4><p>Cultural adaptation included</p></div>
-    <div class="p-step"><div class="p-num">04</div><h4>Native voiceover</h4><p>Real speakers record the dub</p></div>
-    <div class="p-step"><div class="p-num">05</div><h4>Sync & QA</h4><p>I fix timing, tone & idioms</p></div>
-    <div class="p-step"><div class="p-num">06</div><h4>Publish & optimize</h4><p>Live in 48h, SEO-ready</p></div>
-  </div>
-</section>
-
-<hr class="div-line">
-
-<!-- TESTIMONIALS -->
-<div class="sec-wide">
-<div class="sec-inner">
-  <div class="sec-top fi">
-    <span class="eyebrow">Client Feedback</span>
-    <h2 class="heading">What happens after <span class="it">we localize.</span></h2>
-    <p class="sub-text">Real results from real creators and businesses. Every testimonial below came from someone who doubted whether localization was worth it.</p>
-  </div>
-  <div class="testi-grid fi">
-    <div class="testi-card">
-      <div class="stars">★★★★★</div>
-      <div class="testi-q">"My Spanish channel went from 200 to 8,400 subscribers in 6 weeks after localizing just 5 videos. The dubbing quality surprised even my native Spanish-speaking followers — they thought I had actually recorded a second version."</div>
-      <div class="testi-auth"><div class="testi-av">JR</div><div><div class="testi-name">James R.</div><div class="testi-role">Finance YouTuber · 210K subscribers</div></div></div>
-      <div class="testi-stat">📈 200 → 8,400 subscribers in 6 weeks</div>
-    </div>
-    <div class="testi-card">
-      <div class="stars">★★★★★</div>
-      <div class="testi-q">"We localized our entire product demo library into Portuguese and saw a 3× increase in Brazilian sign-ups within the first month. Faster turnaround than any agency we'd ever worked with — and half the price."</div>
-      <div class="testi-auth"><div class="testi-av">AS</div><div><div class="testi-name">Aisha S.</div><div class="testi-role">SaaS Founder · B2B Platform</div></div></div>
-      <div class="testi-stat">📊 3× Brazilian conversions in 30 days</div>
-    </div>
-    <div class="testi-card" style="border-style:dashed;">
-      <div class="testi-q" style="font-style:normal;font-size:0.8rem;color:var(--sub);">Your testimonial could live here.</div>
-      <div style="margin-top:0.8rem;padding:0.65rem;background:var(--card2);border-radius:6px;font-size:0.71rem;color:var(--sub);">
-        💡 Ask satisfied clients for 1–2 sentences about their results. Results-first testimonials ("I went from X to Y") convert at 2× the rate of opinion-based ones. Add a real metric and it becomes your strongest piece of social proof.
-      </div>
-      <div style="margin-top:0.9rem;">
-        <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%2C%20I%27d%20like%20to%20share%20my%20experience%20working%20with%20you%20as%20a%20testimonial%20for%20your%20site." class="btn btn-ghost btn-sm" target="_blank">Submit a Testimonial →</a>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- WHY ME -->
-<section class="sec">
-  <div class="sec-top fi">
-    <span class="eyebrow">Why XcellVoxLaps</span>
-    <h2 class="heading">Not an agency. <span class="it">A growth engine.</span></h2>
-    <p class="sub-text">Built for creators and brands who want results — without the overhead, delays, or fine print of traditional localization services.</p>
-  </div>
-  <div class="why-grid fi">
-    <div class="why-card"><div class="why-icon">🎯</div><h4>Creator-first mindset</h4><p>I understand YouTube, algorithms, and what makes content perform — not just how to translate it.</p></div>
-    <div class="why-card"><div class="why-icon">🔊</div><h4>Real native speakers</h4><p>No AI text-to-speech shortcuts. Real humans with natural accents record every voiceover.</p></div>
-    <div class="why-card"><div class="why-icon">⚡</div><h4>48-hour delivery</h4><p>Your content can be live in a new market within two days. No month-long agency timelines.</p></div>
-    <div class="why-card"><div class="why-icon">📈</div><h4>Revenue without new work</h4><p>Your existing library is your biggest untapped asset. We multiply it across language markets.</p></div>
-    <div class="why-card"><div class="why-icon">🔒</div><h4>Fully managed end-to-end</h4><p>From transcription to live publishing — I handle everything and deliver publication-ready files.</p></div>
-    <div class="why-card"><div class="why-icon">💬</div><h4>Direct access, always</h4><p>WhatsApp, Telegram, Instagram — no ticketing systems or account managers between us.</p></div>
-  </div>
-
-  <div class="urgency-bar fi">
-    <div class="urgency-text">🔥 <strong>Limited capacity:</strong> Currently accepting <strong>3 new clients</strong> this month. First consultation is completely free.</div>
-    <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20saw%20you%20have%20limited%20spots%20available%20this%20month.%20I%27d%20like%20to%20claim%20a%20free%20consultation%20before%20they%27re%20gone.%20Here%27s%20what%20I%27m%20working%20on%3A%20" class="btn btn-green btn-sm" target="_blank">Claim Your Spot →</a>
-  </div>
-</section>
-
-<hr class="div-line">
-
-<!-- PRICING -->
-<section id="pricing" class="sec">
-  <div class="sec-top fi">
-    <span class="eyebrow">Pricing</span>
-    <h2 class="heading">Transparent plans. <span class="it">Real ROI.</span></h2>
-    <p class="sub-text">All plans include full end-to-end service — translation, voiceover, sync, and publishing. Pay for outcomes, not hours.</p>
-  </div>
-  <div class="pricing-grid fi">
-    <div class="plan-card">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">Custom</div>
-      <div class="plan-note">Test one language market with a single video or asset before scaling.</div>
-      <ul class="plan-feats">
-        <li>1 video or asset localized</li>
-        <li>1 target language</li>
-        <li>Native voiceover included</li>
-        <li>Translation & transcription</li>
-        <li>Delivery within 48 hours</li>
-      </ul>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20like%20to%20get%20a%20quote%20for%20your%20Starter%20plan.%20I%20have%20one%20video%20I%27d%20like%20to%20localize%20into%20%5BLANGUAGE%5D.%20Can%20you%20share%20pricing%3F" class="plan-btn pb-ghost" target="_blank">Get a Quote →</a>
-    </div>
-    <div class="plan-card pop">
-      <div class="pop-badge">Most Popular</div>
-      <div class="plan-name">Growth</div>
-      <div class="plan-price">Custom</div>
-      <div class="plan-note">For creators and brands building a consistent presence across multiple language markets.</div>
-      <ul class="plan-feats">
-        <li>4–10 videos or assets / month</li>
-        <li>Up to 3 languages</li>
-        <li>Native voiceover per market</li>
-        <li>SEO optimization included</li>
-        <li>Managed publishing handled</li>
-        <li>Priority 48h turnaround</li>
-      </ul>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20interested%20in%20your%20Growth%20plan.%20I%20create%20around%20%5BX%5D%20videos%20per%20month%20and%20want%20to%20expand%20into%20%5BLANGUAGE%5D.%20Can%20we%20talk%20about%20what%20this%20would%20look%20like%20for%20me%3F" class="plan-btn pb-solid" target="_blank">Start Growing →</a>
-    </div>
-    <div class="plan-card">
-      <div class="plan-name">Scale</div>
-      <div class="plan-price">Custom</div>
-      <div class="plan-note">For established creators and businesses entering multiple global markets simultaneously.</div>
-      <ul class="plan-feats">
-        <li>Unlimited videos / assets</li>
-        <li>All 5+ languages</li>
-        <li>Dedicated account manager</li>
-        <li>Bulk pricing discounts</li>
-        <li>Analytics & growth reporting</li>
-        <li>White-glove support</li>
-      </ul>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20interested%20in%20your%20Scale%20plan.%20I%20have%20a%20large%20content%20library%20and%20want%20to%20expand%20into%20multiple%20language%20markets.%20Can%20we%20set%20up%20a%20call%20to%20discuss%3F" class="plan-btn pb-ghost" target="_blank">Let's Talk →</a>
-    </div>
-  </div>
-
-  <div class="rr-bar fi">
-    🛡️ <div><strong style="color:var(--accent);">Risk-free first step:</strong> Not sure yet? Send me one video and I'll dub the <strong>first 60 seconds completely free</strong> — no payment, no commitment — so you can hear the quality before deciding anything. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20love%20to%20take%20you%20up%20on%20the%20free%2060-second%20sample%20dub.%20Here%20is%20my%20video%20link%3A%20%5BPASTE%20LINK%5D%20%E2%80%94%20I%27d%20like%20it%20dubbed%20into%20%5BLANGUAGE%5D.%20Thanks%21" target="_blank">Claim your free 60-second sample →</a></div>
-  </div>
-</section>
-
-<!-- ── CONTACT SECTION ── -->
-<section id="contact" class="sec" style="padding-top:0;">
-  <div class="sec-top fi">
-    <span class="eyebrow">Get In Touch</span>
-    <h2 class="heading">Every conversation<br><span class="it">starts with one message.</span></h2>
-    <p class="sub-text">Choose whichever platform you're most comfortable with. Each button opens with a pre-written message so you're never staring at a blank screen wondering what to say.</p>
-  </div>
-
-  <div class="contact-grid fi">
-
-    <!-- WhatsApp — PRIMARY -->
-    <div class="contact-card primary">
-      <span class="response-tag">⚡ Replies within 2h</span>
-      <div class="cc-platform">
-        <div class="cc-icon wa">💬</div>
-        <div><div class="cc-name">WhatsApp</div><div class="cc-handle">+234 903 236 5125</div></div>
-      </div>
-      <div class="cc-message-preview">
-        <span class="msg-text">"Hi XcellVoxLaps 👋 I just visited your website and I'm interested in localizing my videos. I create content in [your niche] and I'd like to explore reaching a [Spanish/Portuguese/Hindi] audience. Can we talk about what's possible?"</span>
-      </div>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20just%20visited%20your%20website%20and%20I%27m%20interested%20in%20localizing%20my%20videos.%20I%20create%20content%20in%20%5Byour%20niche%5D%20and%20I%27d%20like%20to%20explore%20reaching%20a%20new%20language%20audience.%20Can%20we%20talk%20about%20what%27s%20possible%3F" class="cc-btn wa-btn" target="_blank">Open WhatsApp Chat →</a>
-    </div>
-
-    <!-- Telegram -->
-    <div class="contact-card">
-      <span class="response-tag">✈️ Fast delivery</span>
-      <div class="cc-platform">
-        <div class="cc-icon tg">✈️</div>
-        <div><div class="cc-name">Telegram</div><div class="cc-handle">@Xcellexert</div></div>
-      </div>
-      <div class="cc-message-preview">
-        <span class="msg-text">"Hi, I found XcellVoxLaps through your website. I'm a content creator looking to expand my reach through video localization. I'd love to understand your process and pricing — are you available to chat?"</span>
-      </div>
-      <a href="https://t.me/Xcellexert?text=Hi%2C%20I%20found%20XcellVoxLaps%20through%20your%20website.%20I%27m%20a%20content%20creator%20looking%20to%20expand%20my%20reach%20through%20video%20localization.%20I%27d%20love%20to%20understand%20your%20process%20and%20pricing%20%E2%80%94%20are%20you%20available%20to%20chat%3F" class="cc-btn tg-btn" target="_blank">Open Telegram →</a>
-    </div>
-
-    <!-- Instagram -->
-    <div class="contact-card">
-      <div class="cc-platform">
-        <div class="cc-icon ig">📸</div>
-        <div><div class="cc-name">Instagram</div><div class="cc-handle">@mbloves1</div></div>
-      </div>
-      <div class="cc-message-preview">
-        <span class="msg-text">"Hey! I came across XcellVoxLaps and I'm really interested in video localization for my content. I'd love to learn more about how you help creators reach new language markets. Can we chat?"</span>
-      </div>
-      <a href="https://www.instagram.com/mbloves1" class="cc-btn ig-btn" target="_blank">Open Instagram →</a>
-      <p style="font-size:0.7rem;color:var(--sub);margin-top:0.6rem;text-align:center;">Copy the message above and paste it into the DM box on Instagram.</p>
-    </div>
-
-    <!-- Email -->
-    <div class="contact-card">
-      <div class="cc-platform">
-        <div class="cc-icon em">✉️</div>
-        <div><div class="cc-name">Email</div><div class="cc-handle">via WhatsApp or DM preferred</div></div>
-      </div>
-      <div class="cc-message-preview">
-        <span class="msg-text">Subject: "Video Localization Inquiry — [Your Name/Channel]"<br><br>"Hi, I'm reaching out to inquire about your video localization services. I have [X videos/content] I'd like to localize into [language]. Could you share your process, turnaround time, and pricing?"</span>
-      </div>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20like%20to%20send%20a%20formal%20inquiry%20about%20your%20video%20localization%20services.%20I%20have%20content%20I%27d%20like%20to%20localize%20and%20wanted%20to%20learn%20more%20about%20your%20process%2C%20turnaround%20time%2C%20and%20pricing.%20My%20name%20is%20%5BNAME%5D%20and%20I%20work%20in%20%5BNICHE%5D." class="cc-btn em-btn" target="_blank">Send via WhatsApp →</a>
-      <p style="font-size:0.7rem;color:var(--sub);margin-top:0.6rem;text-align:center;">WhatsApp is the fastest way to get a response.</p>
-    </div>
-
-  </div>
-
-  <!-- SAMPLE DRIVE LINK -->
-  <div class="rr-bar fi" style="margin-top:1.5rem;">
-    ▶ <div>Want to see real work before reaching out? <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" target="_blank">Browse sample videos on Google Drive →</a> — original and dubbed versions side by side.</div>
-  </div>
-</section>
-
-<!-- RESOURCES CALLOUT -->
-<div style="max-width:1100px;margin:0 auto 2rem;padding:0 3rem;position:relative;z-index:1;" class="fi">
-  <div style="background:linear-gradient(90deg,rgba(59,130,246,0.07),rgba(0,224,154,0.05));border:1px solid rgba(0,224,154,0.14);border-radius:var(--r);padding:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-    <div><div style="font-family:'Instrument Serif',serif;font-size:1.05rem;margin-bottom:0.35rem;">📚 Free Video Localization Resources</div><p style="color:var(--sub);font-size:0.82rem;max-width:480px;">10 keyword-researched guides on dubbing costs, AI quality, YouTube growth, and more — completely free.</p></div>
-    <button onclick="goPg('blog')" class="btn btn-ghost btn-sm">Read the Guides →</button>
-  </div>
-</div>
-
-<!-- CTA BOX -->
-<div class="cta-box-wrap">
-  <div class="cta-box fi">
-    <h2 class="cta-heading">Your next million views<br>are in a <span class="it">different language.</span></h2>
-    <p class="cta-sub">The audience already exists. The algorithm already rewards it. The only thing missing is your content — in their language. Let's fix that.</p>
-    <div class="cta-btns">
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20ready%20to%20start%20localizing%20my%20content.%20I%27d%20love%20to%20book%20a%20free%20consultation%20to%20discuss%20my%20videos%20and%20which%20language%20markets%20make%20sense%20for%20me.%20When%20are%20you%20available%3F" class="btn btn-green" target="_blank">💬 Book a Free Consultation</a>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20like%20to%20take%20you%20up%20on%20the%20free%2060-second%20sample%20dub.%20Here%20is%20my%20video%20link%3A%20%5BPASTE%20LINK%5D%20%E2%80%94%20I%27d%20like%20it%20dubbed%20into%20%5BLANGUAGE%5D." class="btn btn-ghost" target="_blank">🎙 Get a Free Sample Dub</a>
-    </div>
-    <p class="cta-small">No payment. No commitment. Just results you can hear. <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" target="_blank">View sample work →</a></p>
-  </div>
-</div>
-
-</div><!-- /pg-home -->
-
-
-<!-- ═══════════════════════════════
-  BLOG / RESOURCES PAGE
-═══════════════════════════════ -->
-<div id="pg-blog" class="pg">
-
-  <div class="blog-hero">
-    <div class="blog-ey">Free SEO Resources</div>
-    <h1 class="blog-h1">Video Localization<br><span>Guides & Strategy</span></h1>
-    <p class="blog-sub">10 keyword-researched articles on AI dubbing, pricing, YouTube growth, and more — selected from 40 analyzed topics.</p>
-  </div>
-
-  <nav class="blog-nav">
-    <button class="b-tab on" onclick="bTab('analysis',this)">📊 Topic Analysis (40)</button>
-    <button class="b-tab" onclick="bTab('articles',this)">✍️ Articles (10)</button>
   </nav>
 
-  <!-- ANALYSIS -->
-  <div id="bp-analysis" class="b-panel on">
-  <div class="blog-body">
-    <div class="b-stats">
-      <div class="bs"><div class="bs-n">40</div><div class="bs-l">Topics Analyzed</div></div>
-      <div class="bs"><div class="bs-n">10</div><div class="bs-l">Top Picks</div></div>
-      <div class="bs"><div class="bs-n">3</div><div class="bs-l">Scoring Criteria</div></div>
-      <div class="bs"><div class="bs-n">500–800</div><div class="bs-l">Words / Article</div></div>
-    </div>
-    <div class="btitle">Scoring Framework</div>
-    <div class="sc-grid">
-      <div class="scc"><strong>① Commercial Intent</strong><span>Does the searcher want to buy, use, or hire? High = pushes directly to your service.</span></div>
-      <div class="scc"><strong>② SEO Winability</strong><span>Long-tail & specific = lower competition, easier to rank for a newer domain.</span></div>
-      <div class="scc"><strong>③ Audience Coverage</strong><span>Topics that speak to creators, businesses, AND freelancers simultaneously score highest.</span></div>
-    </div>
-    <div class="btitle">All 40 Topics Scored</div>
-    <div class="tbl-wrap">
-    <table class="atbl">
-      <thead><tr><th>#</th><th>Topic</th><th>Intent</th><th>Competition</th><th>Audience</th><th>Score</th><th>Pick?</th></tr></thead>
-      <tbody>
-        <tr class="pk"><td>1</td><td><div class="tt">Best AI Dubbing Apps: Which One Should You Choose?</div><div class="ti">Comparison / tool selection</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">All</span></td><td><span class="sd sh">9</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr><td>2</td><td><div class="tt">How to Dub a Video: Step-by-Step for Beginners</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill phi">High</span></td><td><span class="pill plo">Creators</span></td><td><span class="sd sm">6</span></td><td>—</td></tr>
-        <tr class="pk"><td>3</td><td><div class="tt">Free vs Paid Dubbing Software: What's Actually Worth It?</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">All</span></td><td><span class="sd sh">8</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr class="pk"><td>4</td><td><div class="tt">How Much Does It Cost to Dub a Video?</div><div class="ti">Pricing research</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">All</span></td><td><span class="sd sh">9</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr><td>5</td><td><div class="tt">Professional Video Dubbing: What to Expect</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">Business</span></td><td><span class="sd sm">7</span></td><td>—</td></tr>
-        <tr class="pk"><td>6</td><td><div class="tt">Can AI Dubbing Sound Natural? Testing the Latest Tools</div><div class="ti">Evaluation / trust-building</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill plo">Low</span></td><td><span class="pill plo">All</span></td><td><span class="sd sh">9</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr><td>7</td><td><div class="tt">Dubbing Videos into Multiple Languages: A Complete Guide</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill phi">High</span></td><td><span class="pill plo">All</span></td><td><span class="sd sm">6</span></td><td>—</td></tr>
-        <tr class="pk"><td>8</td><td><div class="tt">YouTube Video Dubbing: Grow Your Channel with Multiple Languages</div><div class="ti">Growth strategy</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill plo">Low</span></td><td><span class="pill plo">Creators</span></td><td><span class="sd sh">9</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr><td>9</td><td><div class="tt">How to Dub Marketing Videos Without Breaking Budget</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill plo">Low</span></td><td><span class="pill plo">Business</span></td><td><span class="sd sm">7</span></td><td>—</td></tr>
-        <tr><td>10</td><td><div class="tt">Lip-Sync Dubbing: How Does It Work?</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">All</span></td><td><span class="sd sm">7</span></td><td>—</td></tr>
-        <tr class="pk"><td>11</td><td><div class="tt">Best Dubbing Tools for Content Creators in 2026</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">Creators</span></td><td><span class="sd sh">8</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr class="pk"><td>12</td><td><div class="tt">Should You Use AI Dubbing or Hire a Voice Actor?</div><div class="ti">Decision comparison</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill plo">Low</span></td><td><span class="pill plo">All</span></td><td><span class="sd sh">9</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr><td>13</td><td><div class="tt">How to Improve Your Video Dubbing Quality</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill pme">Medium</span></td><td><span class="pill plo">All</span></td><td><span class="sd sm">6</span></td><td>—</td></tr>
-        <tr><td>14</td><td><div class="tt">Dubbing Your Existing Videos: Can You Really Grow Faster?</div></td><td><span class="pill pi">Informational</span></td><td><span class="pill plo">Low</span></td><td><span class="pill plo">Creators</span></td><td><span class="sd sm">6</span></td><td>—</td></tr>
-        <tr class="pk"><td>15</td><td><div class="tt">What Is Video Localization and Do You Really Need It?</div><div class="ti">Definition + decision</div></td><td><span class="pill pt">Transactional</span></td><td><span class="pill plo">Low</span></td><td><span class="pill plo">All</span></td><td><span class="sd sh">8</span></td><td><span class="pill ppk">✓ PICK</span></td></tr>
-        <tr><td>16–40</td><td colspan="5" style="color:var(--sub);font-size:0.76rem;padding:0.6rem 0.75rem;">Topics 16–40 analyzed and scored. See Articles tab for the top 10 written in full.</td><td>—</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <div class="wpbox">
-      <strong>Why these 10 were chosen:</strong> All selected topics share <strong>transactional or high-commercial intent</strong> (searcher is ready to use or hire a service), <strong>low-to-medium competition</strong> (winnable for a newer domain), and <strong>broad audience fit</strong> spanning creators, businesses, and freelancers. Topics like "start a dubbing business" or "dubbing movies" were dropped — they attract competitors, not clients.
-    </div>
-  </div>
-  </div>
 
-  <!-- ARTICLES -->
-  <div id="bp-articles" class="b-panel">
-  <div class="blog-body">
+  <!-- ============================================================
+    HOME PAGE
+  ============================================================ -->
+  <div id="page-home" class="page active">
 
-    <div class="art-card">
-      <div class="art-head"><div><div class="art-num">Article 01 / 10</div><div class="art-title">Best AI Dubbing Apps in 2026: Which One Should You Choose?</div><div class="art-pills"><span class="pill pt">Transactional</span><span class="pill plo">Score: 9/10</span></div></div></div>
-      <div class="art-kw"><div class="kl">Target Keywords</div><div class="kt"><span class="kw">best AI dubbing app</span><span class="kw">AI dubbing software 2026</span><span class="kw">video dubbing tool</span><span class="kw">best dubbing app for YouTube</span><span class="kw">dubbing software comparison</span></div></div>
-      <div class="art-body">
-<h2>What Makes an AI Dubbing App Actually Good?</h2>
-<ul><li><strong>Voice naturalness</strong> — Does it sound human or robotic?</li><li><strong>Lip sync accuracy</strong> — Is audio aligned to the speaker's mouth?</li><li><strong>Language coverage</strong> — How many languages, and how well?</li><li><strong>Turnaround speed</strong> — Minutes or days?</li></ul>
-<h3>1. Fully Automated AI Tools</h3><p>Upload, pick a language, download. Fastest and cheapest. Top platforms now preserve the original speaker's tone across 10+ languages.</p>
-<h3>2. AI + Human Review (Hybrid)</h3><p>AI does the first pass; human editors clean up timing and delivery. 24–48h turnaround, significantly closer to studio quality. This is XcellVoxLaps' approach.</p>
-<h3>3. DIY Studio Platforms</h3><p>Editable transcripts, per-segment timing, voice cloning. Best for agencies needing full control.</p>
-<h2>Which Type Is Right for You?</h2>
-<p><strong>YouTubers:</strong> Automated AI gives the best ROI. <strong>Businesses:</strong> Hybrid protects brand quality. <strong>Agencies:</strong> Studio-style platforms with client workspaces.</p>
-<div class="acta"><strong>Skip the rabbit hole.</strong> XcellVoxLaps uses a hybrid AI + human pipeline — speed AND quality. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20article%20on%20AI%20dubbing%20apps%20and%20I%27m%20interested%20in%20your%20hybrid%20service.%20Can%20you%20tell%20me%20more%3F" target="_blank">Get your first video dubbed free →</a></div>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-inner">
+        <div class="badge"><div class="pulse"></div> Video Localization Specialist</div>
+        <h1>Your content,<br><em>spoken by the world.</em></h1>
+        <p>Turn your existing videos into multi-market revenue streams — without creating anything new. Native voiceovers, cultural translation, and fully managed publishing tailored to each market.</p>
+        <div class="hero-btns">
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20just%20came%20across%20your%20website%20and%20I%27m%20interested%20in%20localizing%20my%20videos." class="btn btn-primary" target="_blank">💬 Let's Talk — WhatsApp</a>
+          <a href="#portfolio" class="btn btn-outline" onclick="scrollTo('#portfolio')">▶ See Sample Work</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROOF BAR -->
+    <div class="proof-bar">
+      <div class="proof-item reveal"><div class="proof-num">5+</div><div class="proof-label">Languages</div></div>
+      <div class="proof-item reveal"><div class="proof-num">3B+</div><div class="proof-label">Viewers Unlocked</div></div>
+      <div class="proof-item reveal"><div class="proof-num">48h</div><div class="proof-label">Avg. Turnaround</div></div>
+      <div class="proof-item reveal"><div class="proof-num">3×</div><div class="proof-label">Avg. Audience Growth</div></div>
+      <div class="proof-item reveal"><div class="proof-num">0</div><div class="proof-label">New Videos Required</div></div>
+    </div>
+
+    <!-- TICKER -->
+    <div class="ticker">
+      <div class="ticker-inner">
+        <!-- Set 1 -->
+        <span class="ticker-item">🇪🇸 Spanish <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇧🇷 Portuguese <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇮🇳 Hindi <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇸🇦 Arabic <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇫🇷 French <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🎙 Native Voiceovers <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">♻️ Content Repurposing <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">📈 Managed Publishing <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🌍 Zero New Production <span class="ticker-dot">·</span></span>
+        <!-- Set 2 (duplicate for seamless loop) -->
+        <span class="ticker-item">🇪🇸 Spanish <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇧🇷 Portuguese <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇮🇳 Hindi <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇸🇦 Arabic <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🇫🇷 French <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🎙 Native Voiceovers <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">♻️ Content Repurposing <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">📈 Managed Publishing <span class="ticker-dot">·</span></span>
+        <span class="ticker-item">🌍 Zero New Production <span class="ticker-dot">·</span></span>
       </div>
     </div>
 
-    <div class="art-card">
-      <div class="art-head"><div><div class="art-num">Article 02 / 10</div><div class="art-title">How Much Does It Cost to Dub a Video? (2026 Pricing Guide)</div><div class="art-pills"><span class="pill pt">Transactional</span><span class="pill plo">Score: 9/10</span></div></div></div>
-      <div class="art-kw"><div class="kl">Target Keywords</div><div class="kt"><span class="kw">how much does it cost to dub a video</span><span class="kw">video dubbing cost</span><span class="kw">video dubbing pricing</span><span class="kw">AI dubbing price per minute</span><span class="kw">professional video dubbing rates</span></div></div>
-      <div class="art-body">
-<h3>Tier 1: Automated AI ($0–$50/month)</h3><p>Subscription or credit-based. Free tiers: 3–10 minutes/month. Paid: $5–$50/month for 30–250 minutes. Cost per minute: ~$0.04–$0.20.</p>
-<h3>Tier 2: Managed AI Service ($50–$300/video)</h3><p>AI + human review. A 10-minute video in one language: $80–$200. XcellVoxLaps operates here — faster turnaround than most agencies at a fraction of studio cost.</p>
-<h3>Tier 3: Professional Studio ($500–$10,000+)</h3><p>Voice actors, recording studio, director. Gold standard for feature films. Most brands don't need this for regular content.</p>
-<h2>Real Comparison — 30-min Video, 5 Languages</h2>
-<ul><li><strong>AI self-serve:</strong> ~$60–$150</li><li><strong>Managed AI (XcellVoxLaps):</strong> ~$1,500–$3,000</li><li><strong>Traditional studio:</strong> ~$15,000–$40,000</li></ul>
-<div class="acta"><strong>Get an exact quote.</strong> Transparent pricing, no hidden fees. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20pricing%20guide%20article%20and%20I%27d%20like%20a%20quote%20for%20my%20project.%20I%20have%20%5BNUMBER%5D%20videos%20I%27d%20like%20to%20localize%20into%20%5BLANGUAGE%5D." target="_blank">Message on WhatsApp →</a></div>
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="section">
+      <div class="section-head reveal">
+        <span class="eyebrow">Sample Work — Before & After</span>
+        <h2 class="heading">Hear the difference <em>for yourself.</em></h2>
+        <p class="subtext">Real localized samples across different content types and languages. Each tab shows a before/after pair.</p>
+      </div>
+
+      <div class="tabs reveal">
+        <button class="tab active" onclick="switchTab(0, this)">Finance · EN→ES</button>
+        <button class="tab" onclick="switchTab(1, this)">Tech Review · EN→PT</button>
+        <button class="tab" onclick="switchTab(2, this)">Education · EN→HI</button>
+      </div>
+
+      <!-- Sample: Finance EN→ES -->
+      <div class="tab-panel active" id="tab-0">
+        <div class="sample-box reveal">
+          <div class="sample-header">
+            <div class="sample-meta"><strong>Finance explainer</strong> · English → Spanish · 4 min</div>
+            <div class="tag-row">
+              <span class="tag tag-green">✓ Lip-sync dubbing</span>
+              <span class="tag tag-green">✓ Cultural adaptation</span>
+              <span class="tag">Native speaker reviewed</span>
+            </div>
+          </div>
+          <div class="sample-cols">
+            <div class="sample-col">
+              <div class="col-label">Original <span class="lang-chip">EN</span></div>
+              <div class="video-slot has-media">
+                <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778809513/Woman_doesn_t_mean_hang_your_destiny_on_a_man_DrPaulEnenche_Dunamis_Theglorydome_motivation_fc9yq8.mp4" controls playsinline></video>
+              </div>
+            </div>
+            <div class="sample-col">
+              <div class="col-label">Localized <span class="lang-chip es">ES</span></div>
+              <div class="video-slot has-media">
+                <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778810974/dr_pual-spanish_gqh4tt.mp4" controls playsinline></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample: Tech Review EN→PT -->
+      <div class="tab-panel" id="tab-1">
+        <div class="sample-box reveal">
+          <div class="sample-header">
+            <div class="sample-meta"><strong>Tech review video</strong> · English → Portuguese · 8 min</div>
+            <div class="tag-row">
+              <span class="tag tag-green">✓ Voice cloning</span>
+              <span class="tag tag-green">✓ Subtitle sync</span>
+              <span class="tag">YouTube-ready</span>
+            </div>
+          </div>
+          <div class="sample-cols">
+            <div class="sample-col">
+              <div class="col-label">Original <span class="lang-chip">EN</span></div>
+              <div class="video-slot has-media">
+                <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778808977/5_iPhones_you_shouldn_t_swap-_engish_cvpapt.mp4" controls playsinline></video>
+              </div>
+            </div>
+            <div class="sample-col">
+              <div class="col-label">Localized <span class="lang-chip pt">PT</span></div>
+              <div class="video-slot has-media">
+                <video src="https://res.cloudinary.com/drunrpiwa/video/upload/v1778810778/0404_lw3k5f.mp4" controls playsinline></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample: Education EN→HI (placeholder — add your video URLs here) -->
+      <div class="tab-panel" id="tab-2">
+        <div class="sample-box reveal">
+          <div class="sample-header">
+            <div class="sample-meta"><strong>Educational content</strong> · English → Hindi · 6 min</div>
+            <div class="tag-row">
+              <span class="tag tag-green">✓ Cultural adaptation</span>
+              <span class="tag">High-retention format</span>
+            </div>
+          </div>
+          <div class="sample-cols">
+            <div class="sample-col">
+              <div class="col-label">Original <span class="lang-chip">EN</span></div>
+              <!-- TO ADD: replace with <video src="YOUR_VIDEO_URL" controls playsinline></video> and add class="has-media" to .video-slot -->
+              <div class="video-slot">
+                <div class="video-ph">
+                  <div class="video-ph-icon">▶</div>
+                  <div class="video-ph-text">Original English video<br>Add your video URL here</div>
+                </div>
+              </div>
+            </div>
+            <div class="sample-col">
+              <div class="col-label">Localized <span class="lang-chip hi">HI</span></div>
+              <!-- TO ADD: replace with <video src="YOUR_VIDEO_URL" controls playsinline></video> and add class="has-media" to .video-slot -->
+              <div class="video-slot">
+                <div class="video-ph">
+                  <div class="video-ph-icon">🎙</div>
+                  <div class="video-ph-text">Hindi dubbed version<br>Add your video URL here</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SERVICES -->
+    <section id="services" class="section">
+      <div class="section-head reveal">
+        <span class="eyebrow">What I Do</span>
+        <h2 class="heading">Everything handled. <em>Nothing left to you.</em></h2>
+        <p class="subtext">From raw video to live, optimized content in a new language market — every step, end to end.</p>
+      </div>
+      <div class="services-grid reveal">
+        <div class="service-card">
+          <div class="service-icon">🎙</div>
+          <h3>Native Voiceover Dubbing</h3>
+          <p>Real human voices from native speakers — not robotic, not generic. Your content sounds like it was made for that audience.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌐</div>
+          <h3>Cultural Translation</h3>
+          <p>We adapt meaning, idioms, and tone — not just words. Your message lands the way you intended, in every language.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">♻️</div>
+          <h3>Content Repurposing</h3>
+          <p>Your existing library transformed into localized multi-market assets. Zero new production required from your side.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎬</div>
+          <h3>Video Dubbing & Lip Sync</h3>
+          <p>Dubbed audio synced to your video timeline — lips, cuts, and energy match naturally in every target language.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📤</div>
+          <h3>Managed Publishing</h3>
+          <p>Full platform upload with localized titles, descriptions, tags, and thumbnails — tailored to each market's algorithm.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📊</div>
+          <h3>SEO Localization</h3>
+          <p>Optimized for search in every target market. Your content gets found, watched, and compounds as a long-term traffic asset.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- LANGUAGES -->
+    <div class="section-wide">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <span class="eyebrow">Markets I Unlock</span>
+          <h2 class="heading">5 languages. <em>Billions of new viewers.</em></h2>
+          <p class="subtext">Each language market is a separate, addressable audience hungry for content in their native tongue.</p>
+        </div>
+        <div class="langs-grid reveal">
+          <div class="lang-card"><span class="flag">🇪🇸</span><div><div class="lang-name">Spanish</div><div class="lang-regions">ES · MX · AR · CO</div></div></div>
+          <div class="lang-card"><span class="flag">🇧🇷</span><div><div class="lang-name">Portuguese</div><div class="lang-regions">BR · PT</div></div></div>
+          <div class="lang-card"><span class="flag">🇮🇳</span><div><div class="lang-name">Hindi</div><div class="lang-regions">IN</div></div></div>
+          <div class="lang-card"><span class="flag">🇸🇦</span><div><div class="lang-name">Arabic</div><div class="lang-regions">SA · AE · EG</div></div></div>
+          <div class="lang-card"><span class="flag">🇫🇷</span><div><div class="lang-name">French</div><div class="lang-regions">FR · CA · BE</div></div></div>
+          <div class="lang-card accent"><span class="flag">🌍</span><div><div class="lang-name" style="color:var(--green);">More on request</div><div class="lang-regions">Ask about your target</div></div></div>
+        </div>
       </div>
     </div>
 
-    <div class="art-card">
-      <div class="art-head"><div><div class="art-num">Article 03 / 10</div><div class="art-title">YouTube Video Dubbing: The Creator's Guide to Going Global</div><div class="art-pills"><span class="pill pt">Transactional</span><span class="pill plo">Score: 9/10</span></div></div></div>
-      <div class="art-kw"><div class="kl">Target Keywords</div><div class="kt"><span class="kw">YouTube video dubbing</span><span class="kw">dub YouTube videos another language</span><span class="kw">grow YouTube channel with dubbing</span><span class="kw">YouTube multilingual dubbing</span></div></div>
-      <div class="art-body">
-<h2>Why Dubbing Beats Subtitles for YouTube Growth</h2>
-<p>Creators who switch from subtitles to dubbing report 40–60% higher watch time. Higher watch time signals quality to YouTube's algorithm — which distributes your content more broadly within that language's audience.</p>
-<h2>Which Languages to Dub First</h2>
-<ul><li><strong>Spanish</strong> — 500M+ speakers, massive YouTube audience, high engagement</li><li><strong>Portuguese (Brazil)</strong> — one of the largest YouTube markets globally</li><li><strong>Hindi</strong> — India's YouTube audience is enormous and fast-growing</li><li><strong>Arabic</strong> — high CPM rates, underserved content market</li></ul>
-<h2>The 4-Step YouTube Dubbing Workflow</h2>
-<ul><li><strong>Step 1:</strong> Start with your 5 best-performing existing videos</li><li><strong>Step 2:</strong> Upload as a separate video with target-language title, description, and tags</li><li><strong>Step 3:</strong> Add both subtitles AND dubbed audio track</li><li><strong>Step 4:</strong> Monitor 30 days, then scale to new uploads</li></ul>
-<div class="acta"><strong>Start this week.</strong> XcellVoxLaps will dub your top 5 videos and you upload them within days. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20YouTube%20dubbing%20guide%20and%20I%27d%20like%20to%20start%20localizing%20my%20top%205%20videos.%20My%20channel%20is%20%5BCHANNEL%20LINK%5D%20and%20I%27m%20targeting%20a%20%5BLANGUAGE%5D%20audience." target="_blank">Get started →</a></div>
+    <!-- PROCESS -->
+    <section class="section">
+      <div class="section-head reveal">
+        <span class="eyebrow">My Process</span>
+        <h2 class="heading">Six steps. <em>You send the video.</em> I handle the rest.</h2>
+      </div>
+      <div class="process-row reveal">
+        <div class="step highlight">
+          <div class="step-num">01</div>
+          <h4>You send the video</h4>
+          <p>Any format, length, niche</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4>Pick target markets</h4>
+          <p>Language + regional variant</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4>Transcribe & translate</h4>
+          <p>Cultural adaptation included</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h4>Native voiceover</h4>
+          <p>Real speakers record the dub</p>
+        </div>
+        <div class="step">
+          <div class="step-num">05</div>
+          <h4>Sync & QA</h4>
+          <p>Fix timing, tone & idioms</p>
+        </div>
+        <div class="step">
+          <div class="step-num">06</div>
+          <h4>Publish & optimize</h4>
+          <p>Live in 48h, SEO-ready</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- TESTIMONIALS -->
+    <div class="section-wide">
+      <div class="section-inner">
+        <div class="section-head reveal">
+          <span class="eyebrow">Client Feedback</span>
+          <h2 class="heading">What happens after <em>we localize.</em></h2>
+          <p class="subtext">Real results from real creators and businesses — every testimonial came from someone who doubted whether localization was worth it.</p>
+        </div>
+        <div class="testi-grid reveal">
+          <div class="testi-card">
+            <div class="stars">★★★★★</div>
+            <div class="testi-quote">"My Spanish channel went from 200 to 8,400 subscribers in 6 weeks after localizing just 5 videos. Native Spanish speakers thought I had recorded a second version myself."</div>
+            <div class="testi-author">
+              <div class="testi-avatar">JR</div>
+              <div>
+                <div class="testi-name">James R.</div>
+                <div class="testi-role">Finance YouTuber · 210K subscribers</div>
+              </div>
+            </div>
+            <div class="testi-result">📈 200 → 8,400 subscribers in 6 weeks</div>
+          </div>
+          <div class="testi-card">
+            <div class="stars">★★★★★</div>
+            <div class="testi-quote">"We localized our product demo library into Portuguese and saw a 3× increase in Brazilian sign-ups within the first month — faster and cheaper than any agency we'd used before."</div>
+            <div class="testi-author">
+              <div class="testi-avatar">AS</div>
+              <div>
+                <div class="testi-name">Aisha S.</div>
+                <div class="testi-role">SaaS Founder · B2B Platform</div>
+              </div>
+            </div>
+            <div class="testi-result">📊 3× Brazilian conversions in 30 days</div>
+          </div>
+          <div class="testi-card" style="border-style:dashed;">
+            <div class="testi-quote" style="font-style:normal;font-size:0.8rem;color:var(--muted);font-family:'Syne',sans-serif;">Your results could live here.</div>
+            <div style="margin-top:0.8rem;padding:0.65rem;background:var(--card2);border-radius:var(--r-sm);font-size:0.7rem;color:var(--muted);font-weight:400;">
+              💡 Share 1–2 sentences about your results — especially with a real metric ("went from X to Y"). That's the most persuasive social proof.
+            </div>
+            <div style="margin-top:0.9rem;">
+              <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%2C%20I%27d%20like%20to%20share%20a%20testimonial." class="btn btn-outline btn-sm" target="_blank">Submit a Testimonial →</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="art-card">
-      <div class="art-head"><div><div class="art-num">Article 04 / 10</div><div class="art-title">Can AI Dubbing Sound Natural? We Tested the Latest Tools</div><div class="art-pills"><span class="pill pt">Transactional</span><span class="pill plo">Score: 9/10</span></div></div></div>
-      <div class="art-kw"><div class="kl">Target Keywords</div><div class="kt"><span class="kw">can AI dubbing sound natural</span><span class="kw">AI dubbing quality</span><span class="kw">does AI dubbing sound real</span><span class="kw">natural sounding AI dubbing</span></div></div>
-      <div class="art-body">
-<h2>Two Breakthroughs That Changed Everything in 2025–2026</h2>
-<ul><li><strong>Prosody models finally caught up</strong> — New models treat sentence rhythm as a primary quality signal. Words are correct AND the pacing feels natural.</li><li><strong>Cross-language voice identity</strong> — Top platforms clone your speaker's voice and preserve it across 10+ languages. Your viewers hear you in Spanish.</li></ul>
-<h2>Where AI Still Struggles</h2>
-<ul><li>Multiple overlapping speakers (roundtables, debates)</li><li>Heavy background music under speech</li><li>Emotionally charged or dramatic content</li><li>Cultural idioms that need adaptation, not literal translation</li></ul>
-<h2>Where AI Sounds Completely Natural (2026)</h2>
-<ul><li>Single-speaker talking-head: tutorials, explainers, demos ✓</li><li>E-learning and training with clean speech ✓</li><li>YouTube commentary and educational content ✓</li><li>Marketing videos with clean audio ✓</li></ul>
-<p>Dubbed content generates 60–78% more watch time than subtitles-only in target language markets.</p>
-<div class="acta"><strong>Hear it for yourself.</strong> Submit one video — XcellVoxLaps sends you a 60-second dubbed sample at no cost. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20article%20on%20AI%20dubbing%20quality%20and%20I%27d%20love%20to%20hear%20a%20free%2060-second%20sample%20of%20my%20video.%20Here%20is%20the%20link%3A%20%5BVIDEO%20LINK%5D%20%E2%80%94%20please%20dub%20into%20%5BLANGUAGE%5D." target="_blank">Get a free sample dub →</a></div>
+    <!-- WHY XCELLVOXLAPS -->
+    <section class="section">
+      <div class="section-head reveal">
+        <span class="eyebrow">Why XcellVoxLaps</span>
+        <h2 class="heading">Not an agency. <em>A growth engine.</em></h2>
+        <p class="subtext">Built for creators and brands who want results — without the overhead, delays, or fine print of traditional localization services.</p>
+      </div>
+      <div class="why-grid reveal">
+        <div class="why-card"><div class="why-icon">🎯</div><h4>Creator-first mindset</h4><p>I understand YouTube, algorithms, and what makes content perform — not just how to translate it.</p></div>
+        <div class="why-card"><div class="why-icon">🔊</div><h4>Real native speakers</h4><p>No AI text-to-speech shortcuts. Real humans with natural accents record every voiceover.</p></div>
+        <div class="why-card"><div class="why-icon">⚡</div><h4>48-hour delivery</h4><p>Your content can be live in a new market within two days. No month-long agency timelines.</p></div>
+        <div class="why-card"><div class="why-icon">📈</div><h4>Revenue without new work</h4><p>Your existing library is your biggest untapped asset. We multiply it across language markets.</p></div>
+        <div class="why-card"><div class="why-icon">🔒</div><h4>Fully managed, end-to-end</h4><p>From transcription to live publishing — I handle everything and deliver publication-ready files.</p></div>
+        <div class="why-card"><div class="why-icon">💬</div><h4>Direct access, always</h4><p>WhatsApp, Telegram, Instagram — no ticketing systems or account managers between us.</p></div>
+      </div>
+
+      <div class="urgency reveal">
+        <p>🔥 <strong>Limited capacity:</strong> Currently accepting <strong>3 new clients</strong> this month. First consultation is completely free.</p>
+        <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20saw%20you%20have%20limited%20spots%20available%20this%20month.%20I%27d%20like%20to%20claim%20a%20free%20consultation." class="btn btn-primary btn-sm" target="_blank">Claim Your Spot →</a>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- PRICING -->
+    <section id="pricing" class="section">
+      <div class="section-head reveal">
+        <span class="eyebrow">Pricing</span>
+        <h2 class="heading">Transparent plans. <em>Real ROI.</em></h2>
+        <p class="subtext">All plans include full end-to-end service — translation, voiceover, sync, and publishing. Pay for outcomes, not hours.</p>
+      </div>
+      <div class="pricing-grid reveal">
+        <div class="plan">
+          <div class="plan-tier">Starter</div>
+          <div class="plan-price">Custom</div>
+          <div class="plan-note">Test one language market with a single video before scaling.</div>
+          <ul class="plan-features">
+            <li>1 video or asset localized</li>
+            <li>1 target language</li>
+            <li>Native voiceover included</li>
+            <li>Translation & transcription</li>
+            <li>Delivery within 48 hours</li>
+          </ul>
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20like%20a%20quote%20for%20the%20Starter%20plan." class="plan-btn plan-btn-outline" target="_blank">Get a Quote →</a>
+        </div>
+        <div class="plan featured">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-tier">Growth</div>
+          <div class="plan-price">Custom</div>
+          <div class="plan-note">For creators building a consistent presence across multiple language markets.</div>
+          <ul class="plan-features">
+            <li>4–10 videos or assets / month</li>
+            <li>Up to 3 languages</li>
+            <li>Native voiceover per market</li>
+            <li>SEO optimization included</li>
+            <li>Managed publishing handled</li>
+            <li>Priority 48h turnaround</li>
+          </ul>
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20interested%20in%20the%20Growth%20plan." class="plan-btn plan-btn-solid" target="_blank">Start Growing →</a>
+        </div>
+        <div class="plan">
+          <div class="plan-tier">Scale</div>
+          <div class="plan-price">Custom</div>
+          <div class="plan-note">For established creators entering multiple global markets simultaneously.</div>
+          <ul class="plan-features">
+            <li>Unlimited videos / assets</li>
+            <li>All 5+ languages</li>
+            <li>Dedicated account manager</li>
+            <li>Bulk pricing discounts</li>
+            <li>Analytics & growth reporting</li>
+            <li>White-glove support</li>
+          </ul>
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20interested%20in%20the%20Scale%20plan." class="plan-btn plan-btn-outline" target="_blank">Let's Talk →</a>
+        </div>
+      </div>
+
+      <div class="rr-bar reveal">
+        🛡️
+        <div>
+          <strong style="color:var(--green);">Risk-free first step:</strong> Not sure yet? Send me one video and I'll dub the <strong>first 60 seconds completely free</strong> — no payment, no commitment — so you can hear the quality before deciding.
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20love%20the%20free%2060-second%20sample%20dub.%20Video%3A%20%5BLINK%5D%20%E2%80%94%20please%20dub%20into%20%5BLANGUAGE%5D." target="_blank"> Claim your free 60-second sample →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section" style="padding-top: 0;">
+      <div class="section-head reveal">
+        <span class="eyebrow">Get In Touch</span>
+        <h2 class="heading">Every conversation<br><em>starts with one message.</em></h2>
+        <p class="subtext">Choose whichever platform you prefer. Each button opens with a pre-written message so you're never staring at a blank screen.</p>
+      </div>
+
+      <div class="contact-grid reveal">
+
+        <!-- WhatsApp — Primary -->
+        <div class="contact-card primary">
+          <span class="response-tag">⚡ Replies within 2h</span>
+          <div class="cc-header">
+            <div class="cc-icon cc-icon-wa">💬</div>
+            <div>
+              <div class="cc-name">WhatsApp</div>
+              <div class="cc-handle">+234 903 236 5125</div>
+            </div>
+          </div>
+          <div class="cc-preview">
+            <span class="cc-preview-label">Pre-filled message:</span>
+            "Hi XcellVoxLaps 👋 I just visited your website and I'm interested in localizing my videos. I create content in [your niche] and I'd like to explore reaching a new language audience. Can we talk?"
+          </div>
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20just%20visited%20your%20website%20and%20I%27m%20interested%20in%20localizing%20my%20videos.%20I%20create%20content%20in%20%5Byour%20niche%5D%20and%20I%27d%20like%20to%20explore%20reaching%20a%20new%20language%20audience.%20Can%20we%20talk%3F" class="cc-cta cc-wa" target="_blank">Open WhatsApp Chat →</a>
+        </div>
+
+        <!-- Telegram -->
+        <div class="contact-card">
+          <span class="response-tag">✈️ Fast delivery</span>
+          <div class="cc-header">
+            <div class="cc-icon cc-icon-tg">✈️</div>
+            <div>
+              <div class="cc-name">Telegram</div>
+              <div class="cc-handle">@Xcellexert</div>
+            </div>
+          </div>
+          <div class="cc-preview">
+            <span class="cc-preview-label">Pre-filled message:</span>
+            "Hi, I found XcellVoxLaps through your website. I'm a content creator looking to expand through video localization. I'd love to understand your process and pricing — are you available to chat?"
+          </div>
+          <a href="https://t.me/Xcellexert?text=Hi%2C%20I%20found%20XcellVoxLaps%20through%20your%20website.%20I%27m%20a%20content%20creator%20looking%20to%20expand%20through%20video%20localization.%20Can%20we%20chat%3F" class="cc-cta cc-tg" target="_blank">Open Telegram →</a>
+        </div>
+
+        <!-- Instagram -->
+        <div class="contact-card">
+          <div class="cc-header">
+            <div class="cc-icon cc-icon-ig">📸</div>
+            <div>
+              <div class="cc-name">Instagram</div>
+              <div class="cc-handle">@mbloves1</div>
+            </div>
+          </div>
+          <div class="cc-preview">
+            <span class="cc-preview-label">Message to copy & paste:</span>
+            "Hey! I came across XcellVoxLaps and I'm interested in video localization for my content. I'd love to learn more about how you help creators reach new language markets. Can we chat?"
+          </div>
+          <a href="https://www.instagram.com/mbloves1" class="cc-cta cc-ig" target="_blank">Open Instagram →</a>
+          <p class="cc-note">Copy the message above and paste it into the DM box on Instagram.</p>
+        </div>
+
+        <!-- TikTok -->
+        <div class="contact-card">
+          <div class="cc-header">
+            <div class="cc-icon" style="background:rgba(255,255,255,0.07);">🎵</div>
+            <div>
+              <div class="cc-name">TikTok</div>
+              <div class="cc-handle">@mbmicahels</div>
+            </div>
+          </div>
+          <div class="cc-preview">
+            <span class="cc-preview-label">Follow & DM:</span>
+            Follow the account and send a DM to start a conversation about your localization project.
+          </div>
+          <a href="https://www.tiktok.com/@mbmicahels" class="cc-cta" style="background:rgba(255,255,255,0.08);color:var(--text);" target="_blank">Open TikTok →</a>
+        </div>
+
+      </div>
+
+      <div class="rr-bar reveal" style="margin-top: 1.5rem;">
+        ▶
+        <div>
+          Want to see real work before reaching out?
+          <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" target="_blank">Browse sample videos on Google Drive →</a>
+          — original and dubbed versions side by side.
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BOX -->
+    <div class="cta-wrap">
+      <div class="cta-box reveal">
+        <h2>Your next million views<br>are in a <em>different language.</em></h2>
+        <p>The audience already exists. The algorithm already rewards it. The only thing missing is your content — in their language. Let's fix that.</p>
+        <div class="cta-btns">
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20ready%20to%20start%20localizing%20my%20content.%20I%27d%20love%20a%20free%20consultation." class="btn btn-primary" target="_blank">💬 Book a Free Consultation</a>
+          <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20like%20the%20free%2060-second%20sample%20dub." class="btn btn-outline" target="_blank">🎙 Get a Free Sample Dub</a>
+        </div>
+        <p class="cta-fine">No payment. No commitment. Just results you can hear. <a href="https://drive.google.com/drive/folders/1ey7hohHtHom1ZKkGRXQdK-kQq09p2yzi?usp=sharing" target="_blank">View sample work →</a></p>
       </div>
     </div>
 
-    <div class="art-card">
-      <div class="art-head"><div><div class="art-num">Article 05 / 10</div><div class="art-title">Should You Use AI Dubbing or Hire a Voice Actor?</div><div class="art-pills"><span class="pill pt">Transactional</span><span class="pill plo">Score: 9/10</span></div></div></div>
-      <div class="art-kw"><div class="kl">Target Keywords</div><div class="kt"><span class="kw">AI dubbing vs voice actor</span><span class="kw">should I use AI dubbing</span><span class="kw">hire voice actor for dubbing</span><span class="kw">AI dubbing vs human voice actor</span></div></div>
-      <div class="art-body">
-<h2>Where AI Dubbing Wins</h2>
-<h3>Speed</h3><p>Voice actor: 3–7 days per language minimum. AI: minutes to hours. For a weekly video channel in three languages, AI is the only operationally sustainable option.</p>
-<h3>Cost at Scale</h3><p>Professional voice actor: $200–$500 for a 10-minute video, per language. For five languages: $1,000–$2,500 per video. AI + human review for five languages: $50–$200 combined. The math isn't close.</p>
-<h3>Voice Cloning</h3><p>Modern AI preserves your voice identity across languages. A human voice actor — no matter how skilled — sounds like a different person.</p>
-<h2>Where Human Voice Actors Still Win</h2>
-<ul><li>Dramatic content — films, premium brand storytelling, animated characters</li><li>Content requiring deep cultural adaptation for a specific regional market</li><li>Unique character voices that don't exist in your source material</li></ul>
-<h2>The Decision Framework</h2>
-<ul><li>5+ videos/month in multiple languages → <strong>AI dubbing</strong></li><li>Flagship brand campaign → <strong>Human voice actor</strong></li><li>Weekly YouTube content → <strong>AI dubbing</strong></li><li>E-learning library 50+ modules → <strong>AI + human QA review</strong></li></ul>
-<div class="acta"><strong>Not sure which fits your project?</strong> Tell XcellVoxLaps what you're building — we'll recommend the right approach, honest. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20article%20on%20AI%20dubbing%20vs%20voice%20actors.%20I%27m%20working%20on%20%5BDESCRIBE%20PROJECT%5D%20and%20I%27d%20like%20your%20honest%20recommendation%20on%20which%20approach%20is%20better%20for%20me." target="_blank">Talk to our team →</a></div>
-      </div>
+  </div><!-- /page-home -->
+
+
+  <!-- ============================================================
+    BLOG / RESOURCES PAGE
+  ============================================================ -->
+  <div id="page-blog" class="page">
+
+    <div class="blog-hero">
+      <div class="blog-eyebrow">Free SEO Resources</div>
+      <h1 class="blog-hero">Video Localization<br><em>Guides & Strategy</em></h1>
+      <p>10 keyword-researched articles on AI dubbing, pricing, YouTube growth, and more — selected from 40 analyzed topics.</p>
     </div>
 
-    <div class="art-card">
-      <div class="art-head"><div><div class="art-num">Articles 06–10</div><div class="art-title">Best Dubbing Tools · What Is Localization · Free vs Paid Software · DIY vs Professional · Small Business Dubbing</div><div class="art-pills"><span class="pill pt">All Transactional</span><span class="pill plo">Scores: 7–8/10</span></div></div></div>
-      <div class="art-body" style="color:var(--sub);">
-        <p>Articles 06–10 cover the best dubbing tools for content creators, what video localization actually includes (vs. just translation), when free tools are genuinely enough, how to choose between DIY and professional service, and affordable options for small businesses.</p>
-        <p>Each article is 500–800 words, keyword-optimized, and includes a direct WhatsApp CTA pre-filled with context relevant to that article's topic.</p>
-        <div class="acta"><strong style="color:var(--accent);">Want the full content package?</strong> All 10 articles delivered to you, ready to publish. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20interested%20in%20getting%20the%20full%20SEO%20article%20package%20(all%2010%20articles)%20for%20my%20video%20localization%20site.%20Can%20you%20share%20details%3F" target="_blank">Message on WhatsApp →</a></div>
+    <nav class="blog-nav">
+      <button class="blog-tab active" onclick="switchBlogTab('analysis', this)">📊 Topic Analysis (40)</button>
+      <button class="blog-tab" onclick="switchBlogTab('articles', this)">✍️ Articles (10)</button>
+    </nav>
+
+    <!-- ANALYSIS PANEL -->
+    <div id="blog-analysis" class="blog-panel active">
+      <div class="blog-body">
+
+        <div class="blog-stats">
+          <div class="stat-card"><div class="stat-num">40</div><div class="stat-label">Topics Analyzed</div></div>
+          <div class="stat-card"><div class="stat-num">10</div><div class="stat-label">Top Picks</div></div>
+          <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Scoring Criteria</div></div>
+          <div class="stat-card"><div class="stat-num">500–800</div><div class="stat-label">Words / Article</div></div>
+        </div>
+
+        <div class="section-title">Scoring Framework</div>
+        <div class="criteria-grid">
+          <div class="criteria-card"><strong>① Commercial Intent</strong><span>Does the searcher want to buy, use, or hire? High = pushes directly to your service.</span></div>
+          <div class="criteria-card"><strong>② SEO Winability</strong><span>Long-tail & specific = lower competition, easier to rank for a newer domain.</span></div>
+          <div class="criteria-card"><strong>③ Audience Coverage</strong><span>Topics that speak to creators, businesses, AND freelancers simultaneously score highest.</span></div>
+        </div>
+
+        <div class="section-title">All 40 Topics Scored</div>
+        <div class="tbl-wrap">
+          <table class="topics-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Topic</th>
+                <th>Intent</th>
+                <th>Competition</th>
+                <th>Audience</th>
+                <th>Score</th>
+                <th>Pick?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="pick"><td>1</td><td><div class="topic-title">Best AI Dubbing Apps: Which One Should You Choose?</div><div class="topic-sub">Comparison / tool selection</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-high">9</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr><td>2</td><td><div class="topic-title">How to Dub a Video: Step-by-Step for Beginners</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-high">High</span></td><td><span class="pill pill-low">Creators</span></td><td><span class="score score-mid">6</span></td><td>—</td></tr>
+              <tr class="pick"><td>3</td><td><div class="topic-title">Free vs Paid Dubbing Software: What's Actually Worth It?</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-high">8</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr class="pick"><td>4</td><td><div class="topic-title">How Much Does It Cost to Dub a Video?</div><div class="topic-sub">Pricing research</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-high">9</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr><td>5</td><td><div class="topic-title">Professional Video Dubbing: What to Expect</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">Business</span></td><td><span class="score score-mid">7</span></td><td>—</td></tr>
+              <tr class="pick"><td>6</td><td><div class="topic-title">Can AI Dubbing Sound Natural? Testing the Latest Tools</div><div class="topic-sub">Evaluation / trust-building</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-low">Low</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-high">9</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr><td>7</td><td><div class="topic-title">Dubbing Videos into Multiple Languages: A Complete Guide</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-high">High</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-mid">6</span></td><td>—</td></tr>
+              <tr class="pick"><td>8</td><td><div class="topic-title">YouTube Video Dubbing: Grow Your Channel with Multiple Languages</div><div class="topic-sub">Growth strategy</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-low">Low</span></td><td><span class="pill pill-low">Creators</span></td><td><span class="score score-high">9</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr><td>9</td><td><div class="topic-title">How to Dub Marketing Videos Without Breaking Budget</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-low">Low</span></td><td><span class="pill pill-low">Business</span></td><td><span class="score score-mid">7</span></td><td>—</td></tr>
+              <tr><td>10</td><td><div class="topic-title">Lip-Sync Dubbing: How Does It Work?</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-mid">7</span></td><td>—</td></tr>
+              <tr class="pick"><td>11</td><td><div class="topic-title">Best Dubbing Tools for Content Creators in 2026</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">Creators</span></td><td><span class="score score-high">8</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr class="pick"><td>12</td><td><div class="topic-title">Should You Use AI Dubbing or Hire a Voice Actor?</div><div class="topic-sub">Decision comparison</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-low">Low</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-high">9</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr><td>13</td><td><div class="topic-title">How to Improve Your Video Dubbing Quality</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-med">Medium</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-mid">6</span></td><td>—</td></tr>
+              <tr><td>14</td><td><div class="topic-title">Dubbing Your Existing Videos: Can You Really Grow Faster?</div></td><td><span class="pill pill-info">Informational</span></td><td><span class="pill pill-low">Low</span></td><td><span class="pill pill-low">Creators</span></td><td><span class="score score-mid">6</span></td><td>—</td></tr>
+              <tr class="pick"><td>15</td><td><div class="topic-title">What Is Video Localization and Do You Really Need It?</div><div class="topic-sub">Definition + decision</div></td><td><span class="pill pill-trans">Transactional</span></td><td><span class="pill pill-low">Low</span></td><td><span class="pill pill-low">All</span></td><td><span class="score score-high">8</span></td><td><span class="pill pill-pick">✓ PICK</span></td></tr>
+              <tr><td>16–40</td><td colspan="5" style="color:var(--muted);font-size:0.75rem;padding:0.6rem 0.75rem;font-weight:400;">Topics 16–40 analyzed and scored. See the Articles tab for the top 10 written in full.</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="framework-note">
+          <strong>Why these 10 were chosen:</strong> All selected topics share transactional or high-commercial intent, low-to-medium competition (winnable for a newer domain), and broad audience fit spanning creators, businesses, and freelancers. Topics like "start a dubbing business" or "dubbing movies" were excluded — they attract competitors, not clients.
+        </div>
+
       </div>
-    </div>
+    </div><!-- /blog-analysis -->
 
-  </div>
-  </div>
+    <!-- ARTICLES PANEL -->
+    <div id="blog-articles" class="blog-panel">
+      <div class="blog-body">
 
-</div><!-- /pg-blog -->
+        <div class="article-card">
+          <div class="article-head">
+            <div>
+              <div class="article-num">Article 01 / 10</div>
+              <div class="article-title">Best AI Dubbing Apps in 2026: Which One Should You Choose?</div>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem;">
+                <span class="pill pill-trans">Transactional</span>
+                <span class="pill pill-low">Score: 9/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-keywords">
+            <div class="kw-label">Target Keywords</div>
+            <div class="kw-list">
+              <span class="kw">best AI dubbing app</span>
+              <span class="kw">AI dubbing software 2026</span>
+              <span class="kw">video dubbing tool</span>
+              <span class="kw">best dubbing app for YouTube</span>
+              <span class="kw">dubbing software comparison</span>
+            </div>
+          </div>
+          <div class="article-body">
+            <h2>What Makes an AI Dubbing App Actually Good?</h2>
+            <ul>
+              <li><strong>Voice naturalness</strong> — Does it sound human or robotic?</li>
+              <li><strong>Lip sync accuracy</strong> — Is audio aligned to the speaker's mouth?</li>
+              <li><strong>Language coverage</strong> — How many languages, and how well?</li>
+              <li><strong>Turnaround speed</strong> — Minutes or days?</li>
+            </ul>
+            <h3>1. Fully Automated AI Tools</h3>
+            <p>Upload, pick a language, download. Fastest and cheapest. Top platforms now preserve the original speaker's tone across 10+ languages.</p>
+            <h3>2. AI + Human Review (Hybrid)</h3>
+            <p>AI does the first pass; human editors clean up timing and delivery. 24–48h turnaround, significantly closer to studio quality. This is XcellVoxLaps' approach.</p>
+            <h3>3. DIY Studio Platforms</h3>
+            <p>Editable transcripts, per-segment timing, voice cloning. Best for agencies needing full control.</p>
+            <h2>Which Type Is Right for You?</h2>
+            <p><strong>YouTubers:</strong> Automated AI gives the best ROI. <strong>Businesses:</strong> Hybrid protects brand quality. <strong>Agencies:</strong> Studio-style platforms with client workspaces.</p>
+            <div class="article-cta">
+              <strong>Skip the rabbit hole.</strong> XcellVoxLaps uses a hybrid AI + human pipeline — speed AND quality. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20article%20on%20AI%20dubbing%20apps%20and%20I%27m%20interested%20in%20your%20hybrid%20service." target="_blank">Get your first video dubbed free →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="article-head">
+            <div>
+              <div class="article-num">Article 02 / 10</div>
+              <div class="article-title">How Much Does It Cost to Dub a Video? (2026 Pricing Guide)</div>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem;">
+                <span class="pill pill-trans">Transactional</span>
+                <span class="pill pill-low">Score: 9/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-keywords">
+            <div class="kw-label">Target Keywords</div>
+            <div class="kw-list">
+              <span class="kw">how much does it cost to dub a video</span>
+              <span class="kw">video dubbing cost</span>
+              <span class="kw">video dubbing pricing</span>
+              <span class="kw">AI dubbing price per minute</span>
+              <span class="kw">professional video dubbing rates</span>
+            </div>
+          </div>
+          <div class="article-body">
+            <h3>Tier 1: Automated AI ($0–$50/month)</h3>
+            <p>Subscription or credit-based. Free tiers: 3–10 minutes/month. Paid: $5–$50/month for 30–250 minutes. Cost per minute: ~$0.04–$0.20.</p>
+            <h3>Tier 2: Managed AI Service ($50–$300/video)</h3>
+            <p>AI + human review. A 10-minute video in one language: $80–$200. XcellVoxLaps operates here — faster turnaround than most agencies at a fraction of studio cost.</p>
+            <h3>Tier 3: Professional Studio ($500–$10,000+)</h3>
+            <p>Voice actors, recording studio, director. Gold standard for feature films. Most brands don't need this for regular content.</p>
+            <h2>Real Comparison — 30-min Video, 5 Languages</h2>
+            <ul>
+              <li><strong>AI self-serve:</strong> ~$60–$150</li>
+              <li><strong>Managed AI (XcellVoxLaps):</strong> ~$1,500–$3,000</li>
+              <li><strong>Traditional studio:</strong> ~$15,000–$40,000</li>
+            </ul>
+            <div class="article-cta">
+              <strong>Get an exact quote.</strong> Transparent pricing, no hidden fees. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20pricing%20guide%20and%20I%27d%20like%20a%20quote." target="_blank">Message on WhatsApp →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="article-head">
+            <div>
+              <div class="article-num">Article 03 / 10</div>
+              <div class="article-title">YouTube Video Dubbing: The Creator's Guide to Going Global</div>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem;">
+                <span class="pill pill-trans">Transactional</span>
+                <span class="pill pill-low">Score: 9/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-keywords">
+            <div class="kw-label">Target Keywords</div>
+            <div class="kw-list">
+              <span class="kw">YouTube video dubbing</span>
+              <span class="kw">dub YouTube videos another language</span>
+              <span class="kw">grow YouTube channel with dubbing</span>
+              <span class="kw">YouTube multilingual dubbing</span>
+            </div>
+          </div>
+          <div class="article-body">
+            <h2>Why Dubbing Beats Subtitles for YouTube Growth</h2>
+            <p>Creators who switch from subtitles to dubbing report 40–60% higher watch time. Higher watch time signals quality to YouTube's algorithm — distributing your content more broadly in that language's audience.</p>
+            <h2>Which Languages to Dub First</h2>
+            <ul>
+              <li><strong>Spanish</strong> — 500M+ speakers, massive YouTube audience, high engagement</li>
+              <li><strong>Portuguese (Brazil)</strong> — one of the largest YouTube markets globally</li>
+              <li><strong>Hindi</strong> — India's YouTube audience is enormous and fast-growing</li>
+              <li><strong>Arabic</strong> — high CPM rates, underserved content market</li>
+            </ul>
+            <h2>The 4-Step YouTube Dubbing Workflow</h2>
+            <ul>
+              <li><strong>Step 1:</strong> Start with your 5 best-performing existing videos</li>
+              <li><strong>Step 2:</strong> Upload as a separate video with target-language title, description, and tags</li>
+              <li><strong>Step 3:</strong> Add both subtitles AND dubbed audio track</li>
+              <li><strong>Step 4:</strong> Monitor 30 days, then scale to new uploads</li>
+            </ul>
+            <div class="article-cta">
+              <strong>Start this week.</strong> XcellVoxLaps will dub your top 5 videos and you upload them within days. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20YouTube%20dubbing%20guide%20and%20want%20to%20start%20with%20my%20top%205%20videos." target="_blank">Get started →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="article-head">
+            <div>
+              <div class="article-num">Article 04 / 10</div>
+              <div class="article-title">Can AI Dubbing Sound Natural? We Tested the Latest Tools</div>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem;">
+                <span class="pill pill-trans">Transactional</span>
+                <span class="pill pill-low">Score: 9/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-keywords">
+            <div class="kw-label">Target Keywords</div>
+            <div class="kw-list">
+              <span class="kw">can AI dubbing sound natural</span>
+              <span class="kw">AI dubbing quality</span>
+              <span class="kw">does AI dubbing sound real</span>
+              <span class="kw">natural sounding AI dubbing</span>
+            </div>
+          </div>
+          <div class="article-body">
+            <h2>Two Breakthroughs That Changed Everything in 2025–2026</h2>
+            <ul>
+              <li><strong>Prosody models finally caught up</strong> — New models treat sentence rhythm as a primary quality signal. Words are correct AND the pacing feels natural.</li>
+              <li><strong>Cross-language voice identity</strong> — Top platforms clone your speaker's voice and preserve it across 10+ languages. Your viewers hear you in Spanish.</li>
+            </ul>
+            <h2>Where AI Still Struggles</h2>
+            <ul>
+              <li>Multiple overlapping speakers (roundtables, debates)</li>
+              <li>Heavy background music under speech</li>
+              <li>Emotionally charged or dramatic content</li>
+              <li>Cultural idioms needing adaptation, not literal translation</li>
+            </ul>
+            <h2>Where AI Sounds Completely Natural (2026)</h2>
+            <ul>
+              <li>Single-speaker talking-head: tutorials, explainers, demos ✓</li>
+              <li>E-learning and training with clean speech ✓</li>
+              <li>YouTube commentary and educational content ✓</li>
+              <li>Marketing videos with clean audio ✓</li>
+            </ul>
+            <div class="article-cta">
+              <strong>Hear it for yourself.</strong> Submit one video — XcellVoxLaps sends you a 60-second dubbed sample at no cost. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27d%20love%20a%20free%2060-second%20sample.%20Video%3A%20%5BLINK%5D%20into%20%5BLANGUAGE%5D." target="_blank">Get a free sample dub →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="article-head">
+            <div>
+              <div class="article-num">Article 05 / 10</div>
+              <div class="article-title">Should You Use AI Dubbing or Hire a Voice Actor?</div>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem;">
+                <span class="pill pill-trans">Transactional</span>
+                <span class="pill pill-low">Score: 9/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-keywords">
+            <div class="kw-label">Target Keywords</div>
+            <div class="kw-list">
+              <span class="kw">AI dubbing vs voice actor</span>
+              <span class="kw">should I use AI dubbing</span>
+              <span class="kw">hire voice actor for dubbing</span>
+              <span class="kw">AI dubbing vs human voice actor</span>
+            </div>
+          </div>
+          <div class="article-body">
+            <h2>Where AI Dubbing Wins</h2>
+            <h3>Speed</h3>
+            <p>Voice actor: 3–7 days per language minimum. AI: minutes to hours. For a weekly channel in three languages, AI is the only operationally sustainable option.</p>
+            <h3>Cost at Scale</h3>
+            <p>Professional voice actor: $200–$500 for a 10-minute video, per language. For five languages: $1,000–$2,500 per video. AI + human review for five languages: $50–$200 combined.</p>
+            <h3>Voice Cloning</h3>
+            <p>Modern AI preserves your voice identity across languages. A human voice actor — no matter how skilled — sounds like a different person.</p>
+            <h2>Where Human Voice Actors Still Win</h2>
+            <ul>
+              <li>Dramatic content — films, premium brand storytelling, animated characters</li>
+              <li>Content requiring deep cultural adaptation for a specific regional market</li>
+              <li>Unique character voices that don't exist in your source material</li>
+            </ul>
+            <h2>The Decision Framework</h2>
+            <ul>
+              <li>5+ videos/month in multiple languages → <strong>AI dubbing</strong></li>
+              <li>Flagship brand campaign → <strong>Human voice actor</strong></li>
+              <li>Weekly YouTube content → <strong>AI dubbing</strong></li>
+              <li>E-learning library 50+ modules → <strong>AI + human QA review</strong></li>
+            </ul>
+            <div class="article-cta">
+              <strong>Not sure which fits your project?</strong> Tell XcellVoxLaps what you're building — we'll give you an honest recommendation. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20read%20your%20article%20on%20AI%20vs%20voice%20actors%20and%20I%27d%20like%20your%20honest%20recommendation%20for%20my%20project." target="_blank">Talk to the team →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="article-card">
+          <div class="article-head">
+            <div>
+              <div class="article-num">Articles 06–10</div>
+              <div class="article-title">Best Dubbing Tools · What Is Localization · Free vs Paid Software · DIY vs Professional · Small Business Dubbing</div>
+              <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem;">
+                <span class="pill pill-trans">All Transactional</span>
+                <span class="pill pill-low">Scores: 7–8/10</span>
+              </div>
+            </div>
+          </div>
+          <div class="article-body" style="color:var(--muted);font-weight:400;">
+            <p>Articles 06–10 cover the best dubbing tools for content creators, what video localization actually includes (vs. just translation), when free tools are genuinely enough, how to choose between DIY and professional service, and affordable options for small businesses.</p>
+            <p>Each article is 500–800 words, keyword-optimized, and includes a direct WhatsApp CTA pre-filled with context relevant to that article's topic.</p>
+            <div class="article-cta">
+              <strong style="color:var(--green);">Want the full content package?</strong> All 10 articles delivered to you, ready to publish. <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%27m%20interested%20in%20the%20full%20SEO%20article%20package%20(all%2010%20articles)." target="_blank">Message on WhatsApp →</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /blog-articles -->
+
+  </div><!-- /page-blog -->
 
 
-<!-- FOOTER -->
-<footer>
-  <a class="foot-logo" href="#" onclick="goPg('home')">XcellVox<em>Laps</em></a>
-  <ul class="foot-links">
-    <li><a href="#" onclick="goPg('home')">Home</a></li>
-    <li><a href="#" onclick="goPg('home');goTo('#services')">Services</a></li>
-    <li><a href="#" onclick="goPg('home');goTo('#portfolio')">Portfolio</a></li>
-    <li><a href="#" onclick="goPg('home');goTo('#pricing')">Pricing</a></li>
-    <li><a href="#" onclick="goPg('home');goTo('#contact')">Contact</a></li>
-    <li><a href="#" onclick="goPg('blog')">Resources</a></li>
-  </ul>
-  <p>© 2026 XcellVoxLaps · All rights reserved</p>
-</footer>
+  <!-- ============================================================
+    FOOTER
+  ============================================================ -->
+  <footer>
+    <a class="foot-logo" href="#" onclick="showPage('home')">XcellVox<em>Laps</em></a>
+    <ul class="foot-links">
+      <li><a href="#" onclick="showPage('home')">Home</a></li>
+      <li><a href="#" onclick="showPage('home'); scrollTo('#services')">Services</a></li>
+      <li><a href="#" onclick="showPage('home'); scrollTo('#portfolio')">Portfolio</a></li>
+      <li><a href="#" onclick="showPage('home'); scrollTo('#pricing')">Pricing</a></li>
+      <li><a href="#" onclick="showPage('home'); scrollTo('#contact')">Contact</a></li>
+      <li><a href="#" onclick="showPage('blog')">Resources</a></li>
+    </ul>
+    <p>© 2026 XcellVoxLaps · All rights reserved</p>
+  </footer>
 
-<script>
-function goPg(name) {
-  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
-  document.getElementById('pg-' + name).classList.add('on');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  setTimeout(runFI, 120);
-  return false;
-}
 
-function goTo(id) {
-  setTimeout(() => {
-    const el = document.querySelector(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 60);
-}
+  <!-- ============================================================
+    JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // ── PAGE SWITCHING ──────────────────────────────────────────
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(initReveal, 120);
+      return false;
+    }
 
-function switchS(idx, btn) {
-  document.querySelectorAll('.s-tab').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('sp' + idx).classList.add('active');
-}
+    // ── SMOOTH SCROLL TO ANCHOR ─────────────────────────────────
+    function scrollTo(selector) {
+      setTimeout(() => {
+        const el = document.querySelector(selector);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    }
 
-function bTab(name, btn) {
-  document.querySelectorAll('.b-tab').forEach(b => b.classList.remove('on'));
-  document.querySelectorAll('.b-panel').forEach(p => p.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('bp-' + name).classList.add('on');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    // ── PORTFOLIO TABS ──────────────────────────────────────────
+    function switchTab(idx, btn) {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + idx).classList.add('active');
+    }
 
-const fio = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) setTimeout(() => e.target.classList.add('vis'), i * 65);
-  });
-}, { threshold: 0.07 });
+    // ── BLOG TABS ───────────────────────────────────────────────
+    function switchBlogTab(name, btn) {
+      document.querySelectorAll('.blog-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.blog-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('blog-' + name).classList.add('active');
+    }
 
-function runFI() {
-  document.querySelectorAll('.fi').forEach(el => fio.observe(el));
-}
-runFI();
-</script>
+    // ── SCROLL REVEAL ───────────────────────────────────────────
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        }
+      });
+    }, { threshold: 0.07 });
+
+    function initReveal() {
+      document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    }
+
+    initReveal();
+  </script>
 </body>
 </html>
