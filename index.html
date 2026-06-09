@@ -838,6 +838,17 @@
       gap: 1.2rem;
       margin-top: 2.5rem;
     }
+    /* LinkedIn card spans full width as a professional highlight */
+    .contact-card.linkedin-card {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .contact-card.linkedin-card .cc-header { margin-bottom: 0; flex-shrink: 0; }
+    .contact-card.linkedin-card .cc-preview { margin-bottom: 0; flex: 1; min-width: 200px; }
+    .contact-card.linkedin-card .cc-cta { width: auto; padding: 0.78rem 1.4rem; white-space: nowrap; flex-shrink: 0; }
     .contact-card {
       background: var(--cream);
       border: 1px solid var(--border);
@@ -1146,17 +1157,33 @@
     footer {
       border-top: 1px solid var(--border);
       background: var(--ivory);
-      padding: 1.8rem 3rem;
-      display: flex; align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap; gap: 1rem;
+      padding: 2.5rem 3rem 1.8rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 1.5rem 2rem;
+      align-items: start;
     }
-    .foot-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 500; color: var(--ink); text-decoration: none; }
+    .foot-brand { grid-column: 1; }
+    .foot-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 500; color: var(--ink); text-decoration: none; display: block; margin-bottom: 0.3rem; }
     .foot-logo em { font-style: italic; color: var(--green); }
-    .foot-links { display: flex; gap: 1.5rem; list-style: none; }
-    .foot-links a { color: var(--ink-muted); text-decoration: none; font-size: 0.77rem; transition: color 0.15s; font-weight: 300; }
-    .foot-links a:hover { color: var(--ink); }
-    footer p { color: var(--ink-muted); font-size: 0.72rem; font-weight: 300; }
+    .foot-tagline { font-size: 0.72rem; color: var(--ink-muted); font-weight: 300; }
+    .foot-links { grid-column: 2; display: flex; gap: 1.4rem; list-style: none; align-items: center; padding-top: 0.2rem; }
+    .foot-links a { color: var(--ink-muted); text-decoration: none; font-size: 0.78rem; transition: color 0.15s; font-weight: 400; }
+    .foot-links a:hover { color: var(--green); }
+    .foot-social { grid-column: 3; display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end; }
+    .foot-social-link {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.73rem; font-weight: 500;
+      color: var(--ink-muted); text-decoration: none;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      transition: all 0.15s;
+    }
+    .foot-social-link:hover { color: var(--green); border-color: var(--green-b); background: var(--green-l); }
+    .foot-bottom { grid-column: 1 / -1; display: flex; justify-content: space-between; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+    .foot-bottom p { color: var(--ink-muted); font-size: 0.72rem; font-weight: 300; }
 
     /* ============================================================
        SCROLL REVEAL
@@ -1184,6 +1211,10 @@
       .video-slot video, .video-slot iframe { max-height: 180px; }
       .scroll-card { padding: 1.5rem; }
       .scroll-card-inner { grid-template-columns: 1fr 1fr; }
+      footer { grid-template-columns: 1fr; }
+      .foot-links { flex-wrap: wrap; gap: 0.8rem; }
+      .foot-social { justify-content: flex-start; }
+      .foot-bottom { flex-direction: column; gap: 0.3rem; }
     }
   </style>
 </head>
@@ -1193,14 +1224,14 @@
     NAVIGATION
   ============================================================ -->
   <nav>
-    <a class="logo" href="#" onclick="showPage('home')">XcellVox<em>Laps</em></a>
+    <a class="logo" href="#" onclick="return showPage('home')">XcellVox<em>Laps</em></a>
     <div class="nav-links">
-      <a href="#" onclick="showPage('home'); scrollTo('#services')">Services</a>
-      <a href="#" onclick="showPage('home'); scrollTo('#portfolio')">Portfolio</a>
-      <a href="#" onclick="showPage('home'); scrollTo('#pricing')">Pricing</a>
-      <a href="#" onclick="showPage('home'); scrollTo('#contact')">Contact</a>
-      <a href="#" onclick="showPage('blog')">Resources</a>
-      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%2C%20I%27d%20like%20to%20get%20started%20with%20video%20localization." class="nav-cta" target="_blank">Get Started</a>
+      <a href="#services"   onclick="return navTo('home','#services')">Services</a>
+      <a href="#portfolio"  onclick="return navTo('home','#portfolio')">Portfolio</a>
+      <a href="#pricing"    onclick="return navTo('home','#pricing')">Pricing</a>
+      <a href="#contact"    onclick="return navTo('home','#contact')">Contact</a>
+      <a href="#"           onclick="return showPage('blog')">Resources</a>
+      <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%2C%20I%27d%20like%20to%20get%20started%20with%20video%20localization." class="nav-cta" target="_blank">Get Started →</a>
     </div>
   </nav>
 
@@ -1239,7 +1270,7 @@
         <p>Take your existing videos and multiply them across the world's largest language markets — Spanish, Portuguese, Hindi, Arabic, French and beyond. No new production. Native voices. Global reach.</p>
         <div class="hero-btns">
           <a href="https://wa.me/2349032365125?text=Hi%20XcellVoxLaps%20%F0%9F%91%8B%20I%20just%20came%20across%20your%20website%20and%20I%27m%20interested%20in%20localizing%20my%20videos%20for%20global%20markets." class="btn btn-primary" target="_blank">💬 Let's Talk — WhatsApp</a>
-          <a href="#portfolio" class="btn btn-outline" onclick="scrollTo('#portfolio')">▶ See Sample Work</a>
+          <a href="#portfolio" class="btn btn-outline" onclick="return navTo('home','#portfolio')">▶ See Sample Work</a>
         </div>
         <!-- Market flags -->
         <div class="hero-markets">
@@ -1789,6 +1820,24 @@
           <a href="https://www.tiktok.com/@mbmicahels" class="cc-cta" style="background:var(--ink);color:var(--cream);" target="_blank">Open TikTok →</a>
         </div>
 
+        <!-- LinkedIn -->
+        <div class="contact-card linkedin-card">
+          <div class="cc-header">
+            <div class="cc-icon" style="background:rgba(0,119,181,0.1);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077B5"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </div>
+            <div>
+              <div class="cc-name">LinkedIn</div>
+              <div class="cc-handle">Mike Obaji</div>
+            </div>
+          </div>
+          <div class="cc-preview">
+            <span class="cc-preview-label">Connect professionally:</span>
+            Connect with Mike on LinkedIn to discuss enterprise partnerships, B2B localization projects, or brand collaborations.
+          </div>
+          <a href="https://www.linkedin.com/in/mike-obaji-82a62825a" class="cc-cta" style="background:#0077B5;color:#fff;" target="_blank">View LinkedIn Profile →</a>
+        </div>
+
       </div>
 
       <div class="rr-bar reveal" style="margin-top:1.5rem;">
@@ -1981,16 +2030,44 @@
     FOOTER
   ============================================================ -->
   <footer>
-    <a class="foot-logo" href="#" onclick="showPage('home')">XcellVox<em>Laps</em></a>
+    <div class="foot-brand">
+      <a class="foot-logo" href="#" onclick="return showPage('home')">XcellVox<em>Laps</em></a>
+      <p class="foot-tagline">Global Video Localization · Native Voices · Real Reach</p>
+    </div>
     <ul class="foot-links">
-      <li><a href="#" onclick="showPage('home')">Home</a></li>
-      <li><a href="#" onclick="showPage('home'); scrollTo('#services')">Services</a></li>
-      <li><a href="#" onclick="showPage('home'); scrollTo('#portfolio')">Portfolio</a></li>
-      <li><a href="#" onclick="showPage('home'); scrollTo('#pricing')">Pricing</a></li>
-      <li><a href="#" onclick="showPage('home'); scrollTo('#contact')">Contact</a></li>
-      <li><a href="#" onclick="showPage('blog')">Resources</a></li>
+      <li><a href="#" onclick="return showPage('home')">Home</a></li>
+      <li><a href="#services"  onclick="return navTo('home','#services')">Services</a></li>
+      <li><a href="#portfolio" onclick="return navTo('home','#portfolio')">Portfolio</a></li>
+      <li><a href="#pricing"   onclick="return navTo('home','#pricing')">Pricing</a></li>
+      <li><a href="#contact"   onclick="return navTo('home','#contact')">Contact</a></li>
+      <li><a href="#"          onclick="return showPage('blog')">Resources</a></li>
     </ul>
-    <p>© 2026 XcellVoxLaps · All rights reserved</p>
+    <div class="foot-social">
+      <a href="https://wa.me/2349032365125" target="_blank" class="foot-social-link" title="WhatsApp">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.525 5.845L.057 23.704a.5.5 0 00.614.641l6.094-1.598A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.504-5.23-1.383l-.374-.218-3.879 1.017 1.037-3.781-.239-.389A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        WhatsApp
+      </a>
+      <a href="https://t.me/Xcellexert" target="_blank" class="foot-social-link" title="Telegram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 14.482l-2.95-.924c-.641-.204-.657-.641.136-.953l11.527-4.445c.537-.194 1.006.131.589.088z"/></svg>
+        Telegram
+      </a>
+      <a href="https://www.instagram.com/mbloves1" target="_blank" class="foot-social-link" title="Instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram
+      </a>
+      <a href="https://www.linkedin.com/in/mike-obaji-82a62825a" target="_blank" class="foot-social-link" title="LinkedIn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://www.tiktok.com/@mbmicahels" target="_blank" class="foot-social-link" title="TikTok">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+        TikTok
+      </a>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 XcellVoxLaps · All rights reserved</p>
+      <p>Built to take your content global 🌍</p>
+    </div>
   </footer>
 
 
@@ -2004,15 +2081,17 @@
       document.getElementById('page-' + name).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(initReveal, 120);
-      return false;
+      return false; // prevent default anchor jump
     }
 
-    // ── SMOOTH SCROLL TO ANCHOR ─────────────────────────────────
-    function scrollTo(selector) {
+    // ── NAV TO: switch page then scroll to section ──────────────
+    function navTo(page, selector) {
+      showPage(page);
       setTimeout(() => {
         const el = document.querySelector(selector);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 80);
+      }, 120);
+      return false;
     }
 
     // ── PORTFOLIO TABS ──────────────────────────────────────────
